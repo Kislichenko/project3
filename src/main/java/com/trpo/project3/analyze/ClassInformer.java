@@ -5,10 +5,7 @@ import com.thoughtworks.paranamer.CachingParanamer;
 import com.thoughtworks.paranamer.Paranamer;
 import com.trpo.project3.dto.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 
 public class ClassInformer {
@@ -35,6 +32,30 @@ public class ClassInformer {
         infoClass.setName(cl.getSimpleName());
         infoClass.setClassPackage(cl.getPackage().getName());
 
+        //сохранение конструкторов класса
+        ArrayList<InfoConstructor> infoConstructors = new ArrayList<>();
+        Constructor[] constructors = cl.getConstructors();
+        for(int i=0;i<constructors.length;i++){
+            InfoConstructor infoConstructor = new InfoConstructor();
+            infoConstructor.setName(cl.getSimpleName());
+            infoConstructor.setModifiers(Modifier.toString(constructors[i].getModifiers()));
+
+            ArrayList<InfoParameter> infoParameters = new ArrayList<>();
+            Paranamer paranamer = new BytecodeReadingParanamer();
+            String[] parameterNames = paranamer.lookupParameterNames(constructors[i], false);
+            Parameter[] parameters = constructors[i].getParameters();
+            for(int j=0;j<parameters.length;j++){
+                InfoParameter infoParameter = new InfoParameter();
+                infoParameter.setName(parameterNames[j]);
+                infoParameter.setType(getInfoTypeForParameters(parameters[j]));
+                infoParameters.add(infoParameter);
+            }
+            infoConstructors.add(infoConstructor);
+        }
+
+        infoClass.setConstructors(infoConstructors);
+
+        //сохранение полей класса
         ArrayList<InfoField> infoFields = new ArrayList<>();
         Field[] fields = cl.getDeclaredFields();
         for(int i=0;i<fields.length;i++){
@@ -46,6 +67,7 @@ public class ClassInformer {
         }
         infoClass.setFields(infoFields);
 
+        //сохранение методов класса
         ArrayList<InfoMethod> infoMethods = new ArrayList<>();
         Method[] methods = cl.getDeclaredMethods();
         for(int i=0;i<methods.length;i++) {
@@ -55,7 +77,6 @@ public class ClassInformer {
             infoMethod.setReturnType(getInfoTypeForMethod(methods[i]));
 
             ArrayList<InfoParameter> infoParameters = new ArrayList<>();
-
             Paranamer paranamer = new BytecodeReadingParanamer();
             String[] parameterNames = paranamer.lookupParameterNames(methods[i], false);
             Parameter[] parameters = methods[i].getParameters();
@@ -63,7 +84,7 @@ public class ClassInformer {
             for (int k = 0; k < parameterNames.length; k++) {
                 InfoParameter infoParameter = new InfoParameter();
                 infoParameter.setName(parameterNames[k]);
-                infoParameter.setType(parameters[k].getType().toString());
+                infoParameter.setType(getInfoTypeForParameters(parameters[k]));
                 infoParameters.add(infoParameter);
             }
             infoMethod.setParameters(infoParameters);
@@ -95,7 +116,18 @@ public class ClassInformer {
         }else{
             infoType.setTypePackage("");
         }
-            return infoType;
+        return infoType;
+    }
+
+    private InfoType getInfoTypeForParameters(Parameter param){
+        InfoType infoType = new InfoType();
+        infoType.setName(param.getType().getSimpleName());
+        if(param.getType().getPackage()!=null){
+            infoType.setTypePackage(param.getType().getName());
+        }else{
+            infoType.setTypePackage("");
+        }
+        return infoType;
     }
 
     public void getInfoClass(String nameClass){
@@ -107,6 +139,24 @@ public class ClassInformer {
         System.out.println("Name of class "+nameClass+" "+ testClass.getName());
         System.out.println("Package of class: "+testClass.getPackage().getName());
         System.out.println(" ");
+
+        Constructor[] constructors = testClass.getConstructors();
+        for(int i=0;i<constructors.length;i++){
+            System.out.println("Con name: "+constructors[i].getName());
+            System.out.println("Con str: "+constructors[i].toString());
+
+            Paranamer paranamer = new BytecodeReadingParanamer();
+            String[] parameterNames = paranamer.lookupParameterNames(constructors[i], false);
+            Parameter[] parameters = constructors[i].getParameters();
+            for(int j=0;j<parameters.length;j++){
+                System.out.println("Con Param name0: "+parameterNames[j]);
+                System.out.println("Con Param name1: "+parameters[j].getName());
+                System.out.println("Con Param type: "+parameters[j].getType().getName());
+                System.out.println("Con Param type: "+parameters[j].getType().getSimpleName());
+                System.out.println();
+            }
+        }
+
 
         //поля
         Field[] fields = testClass.getDeclaredFields();

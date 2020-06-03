@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class InfoParameter {
     private String name;
-    private String type;
+    private InfoType type;
 }

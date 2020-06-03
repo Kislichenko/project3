@@ -10,5 +10,6 @@ public class InfoClass {
     private String classPackage;
     private ArrayList<InfoMethod> methods;
     private ArrayList<InfoField> fields;
+    private ArrayList<InfoConstructor> constructors;
 
 }

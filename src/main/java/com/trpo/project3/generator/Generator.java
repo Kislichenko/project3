@@ -13,6 +13,8 @@ public class Generator {
 
     public void run(){
         ArrayList<InfoClass> infoClasses = classInformer.saveAllClasses();
+        //classInformer.getInfoClass("Car");
+
 
 
         CodeGenerator codeGenerator = new CodeGenerator();
