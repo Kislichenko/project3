@@ -30,13 +30,13 @@ public class InfoClass {
         }
 
 
-
         //методы
         Method[] methods = testClass.getDeclaredMethods();
         for(int i=0;i<methods.length;i++){
             System.out.println("Method name: "+ methods[i].getName());
-            System.out.println("Method: "+ methods[i].toString());
-            System.out.println("");
+            System.out.println("Method return type: "+ methods[i].getReturnType().toString());
+            System.out.println("Method modifier: "+ Modifier.toString(methods[i].getModifiers()));
+
 
             //получаем названия параметров метода и их типы
             Paranamer paranamer = new BytecodeReadingParanamer();
@@ -47,7 +47,8 @@ public class InfoClass {
                 System.out.println("Parameter's names for Method "+methods[i].getName() +": "+parameterNames[k]);
                 System.out.println("Parameter: "+parameters[k].getType());
             }
-            
+
+            System.out.println("");
         }
 
 
