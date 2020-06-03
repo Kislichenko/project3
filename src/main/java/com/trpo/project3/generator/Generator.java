@@ -8,5 +8,7 @@ public class Generator {
         InfoClass infoClass = new InfoClass();
         infoClass.getInfoClass("Car");
 
+
+
     }
 }

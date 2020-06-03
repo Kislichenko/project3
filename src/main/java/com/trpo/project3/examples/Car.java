@@ -8,4 +8,9 @@ public class Car {
     private int cost;
     private Integer old;
 
+    public void setModelAndCost(String model1, int cost1){
+        this.model = model1;
+        this.cost = cost1;
+    }
+
 }
