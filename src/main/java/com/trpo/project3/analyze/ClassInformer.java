@@ -101,7 +101,7 @@ public class ClassInformer {
         InfoType infoType = new InfoType();
         infoType.setName(field.getType().getSimpleName());
         if(field.getType().getPackage()!=null){
-            infoType.setTypePackage(field.getType().getName());
+            infoType.setTypePackage(field.getType().getTypeName());
         }else{
             infoType.setTypePackage("");
         }
@@ -123,7 +123,7 @@ public class ClassInformer {
         InfoType infoType = new InfoType();
         infoType.setName(param.getType().getSimpleName());
         if(param.getType().getPackage()!=null){
-            infoType.setTypePackage(param.getType().getName());
+            infoType.setTypePackage(param.getType().getTypeName());
         }else{
             infoType.setTypePackage("");
         }
@@ -151,7 +151,7 @@ public class ClassInformer {
             for(int j=0;j<parameters.length;j++){
                 System.out.println("Con Param name0: "+parameterNames[j]);
                 System.out.println("Con Param name1: "+parameters[j].getName());
-                System.out.println("Con Param type: "+parameters[j].getType().getName());
+                System.out.println("Con Param type: "+parameters[j].getType().getTypeName());
                 System.out.println("Con Param type: "+parameters[j].getType().getSimpleName());
                 System.out.println();
             }

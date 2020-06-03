@@ -21,6 +21,8 @@ public class Generator {
         codeGenerator.genTests(infoClasses);
 
         codeGenerator.printTestByNameClass("Car");
+        PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();
+        //System.out.println(primitiveGenerator.getGenPrimString("short"));
 
 
         //FileSaver fileSaver = new FileSaver();

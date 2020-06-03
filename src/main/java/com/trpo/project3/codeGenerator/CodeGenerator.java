@@ -62,14 +62,14 @@ public class CodeGenerator {
     }
 
     private String getInfoMethodTypeName(InfoMethod method){
-        if(!method.getReturnType().getTypePackage().equals("")){
+        if(!method.getReturnType().getTypePackage().equals(method.getReturnType().getName())){
             neededPackages.add(method.getReturnType().getTypePackage());
         }
         return method.getReturnType().getName();
     }
 
     private String getInfoFieldTypeName(InfoField field){
-        if(!field.getType().getTypePackage().equals("")){
+        if(!field.getType().getTypePackage().equals(field.getType().getName())){
             neededPackages.add(field.getType().getTypePackage());
         }
         return field.getType().getName();
