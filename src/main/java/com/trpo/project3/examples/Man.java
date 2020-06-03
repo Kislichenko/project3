@@ -14,9 +14,9 @@ public class Man {
 
     public void brokeCarByModel(String model){
         for (int i=0;i<cars.size();i++){
-            if(cars.get(i).getModel().equals(model)){
+            /*if(cars.get(i).getModel().equals(model)){
                 cars.remove(i);
-            }
+            }*/
         }
     }
 

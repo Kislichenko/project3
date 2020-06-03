@@ -50,8 +50,11 @@ public class ClassInformer {
                 infoParameter.setType(getInfoTypeForParameters(parameters[j]));
                 infoParameters.add(infoParameter);
             }
+            infoConstructor.setParameters(infoParameters);
             infoConstructors.add(infoConstructor);
+
         }
+
 
         infoClass.setConstructors(infoConstructors);
 
@@ -122,11 +125,8 @@ public class ClassInformer {
     private InfoType getInfoTypeForParameters(Parameter param){
         InfoType infoType = new InfoType();
         infoType.setName(param.getType().getSimpleName());
-        if(param.getType().getPackage()!=null){
-            infoType.setTypePackage(param.getType().getTypeName());
-        }else{
-            infoType.setTypePackage("");
-        }
+        infoType.setTypePackage(param.getType().getTypeName());
+
         return infoType;
     }
 

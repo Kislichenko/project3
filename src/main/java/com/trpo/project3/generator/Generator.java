@@ -2,6 +2,7 @@ package com.trpo.project3.generator;
 
 import com.trpo.project3.analyze.ClassInformer;
 import com.trpo.project3.codeGenerator.CodeGenerator;
+import com.trpo.project3.codeGenerator.ConsCodeGenerator;
 import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.utils.FileSaver;
 
@@ -22,6 +23,7 @@ public class Generator {
 
         codeGenerator.printTestByNameClass("Car");
         PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();
+
         //System.out.println(primitiveGenerator.getGenPrimString("short"));
 
 

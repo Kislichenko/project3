@@ -18,6 +18,7 @@ public class CodeGenerator {
 
     private Map<String, String> classTests = new HashMap<>();
     Set<String> neededPackages = new HashSet<>();
+    ConsCodeGenerator consCodeGenerator = new ConsCodeGenerator();
 
     public void genTests(ArrayList<InfoClass> infoClasses) {
         for (int i = 0; i < infoClasses.size(); i++) {
@@ -30,10 +31,12 @@ public class CodeGenerator {
         test = test + "package " + infoClass.getClassPackage() + endOfLine;
         test = test + getAllHeaders();
         test = test + "class " + infoClass.getName() + "Test" + openBracket;
+        test = test + consCodeGenerator.genInitCons(infoClass);
         test = test + genMethodTests(infoClass.getMethods());
         test = test + endBracket ;
 
         String formattedSource ="";
+        System.out.println(test);
         try {
             formattedSource += new com.google.googlejavaformat.java.Formatter().formatSource(test);
         } catch (FormatterException e) {

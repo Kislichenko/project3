@@ -6,7 +6,7 @@ public class PrimitiveGenerator {
 
     Random random = new Random();
 
-    public String genSimple(String type){
+    private String genSimple(String type){
 
         if(type.equals("int")){
             return ""+random.nextInt();
@@ -32,7 +32,7 @@ public class PrimitiveGenerator {
 
     }
 
-    public String genPrimArray(String type){
+    private String genPrimArray(String type){
         int size = random.nextInt(10);
         String genStr="new "+type+"{"+genSimple(type.substring(0,type.length()-2));
         for(int i=1;i<size;i++) {

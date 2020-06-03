@@ -8,5 +8,5 @@ import java.util.ArrayList;
 public class InfoConstructor {
     private String name;
     private String modifiers;
-    private ArrayList<InfoType> parameters;
+    private ArrayList<InfoParameter> parameters;
 }
