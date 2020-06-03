@@ -12,12 +12,18 @@ import java.lang.reflect.Parameter;
 public class InfoClass {
     ClassScanner classScanner = new ClassScanner();
 
+    public Class getClassByName(String className){
+        classScanner.scanPath();
+        return classScanner.getClassByName(className);
+    }
+
     public void getInfoClass(String nameClass){
         classScanner.scanPath();
         Class testClass = classScanner.getClassByName(nameClass);
 
         //инфо о загруженном классе
         System.out.println("Name of class "+nameClass+" "+ testClass.getName());
+        System.out.println("Package of class: "+testClass.getPackage().getName());
         System.out.println(" ");
 
         //поля

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.ArrayList;
 
 @Data
-public class Car1 {
+public class Auto {
     private String model;
     private int cost;
     private Integer old;
