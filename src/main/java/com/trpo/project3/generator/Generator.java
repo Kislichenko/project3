@@ -1,16 +1,28 @@
 package com.trpo.project3.generator;
 
-import com.trpo.project3.analyze.InfoClass;
+import com.trpo.project3.analyze.ClassInformer;
+import com.trpo.project3.codeGenerator.CodeGenerator;
+import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.utils.FileSaver;
+
+import java.util.ArrayList;
 
 public class Generator {
 
-    public void run(){
-        InfoClass infoClass = new InfoClass();
-        infoClass.getInfoClass("Car");
+    ClassInformer classInformer = new ClassInformer();
 
-        FileSaver fileSaver = new FileSaver();
-        fileSaver.createFile(infoClass.getClassByName("Car"), "Hello");
+    public void run(){
+        ArrayList<InfoClass> infoClasses = classInformer.saveAllClasses();
+
+
+        CodeGenerator codeGenerator = new CodeGenerator();
+        codeGenerator.genTests(infoClasses);
+
+        codeGenerator.printTestByNameClass("Car");
+
+
+        //FileSaver fileSaver = new FileSaver();
+        //fileSaver.createFile(infoClasses, "Hello");
 
 
 

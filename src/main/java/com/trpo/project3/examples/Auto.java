@@ -1,10 +1,13 @@
 package com.trpo.project3.examples;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 
-@Data
+@Getter
+@Setter
 public class Auto {
     private String model;
     private int cost;
