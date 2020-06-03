@@ -17,7 +17,7 @@ public class Car {
     private int counter=0;
     //private ArrayList<Integer> nums;
     //private Auto auto;
-    private int[] abr;
+    //private int[] abr;
 
     public void setModelAndCost(String model1, int cost1){
         //this.model = model1;

@@ -6,8 +6,11 @@ import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.dto.InfoField;
 import com.trpo.project3.dto.InfoMethod;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import static jdk.nashorn.internal.ir.LiteralNode.newInstance;
 
 public class CodeGenerator {
     private final String endOfLine = "; ";
@@ -26,7 +29,40 @@ public class CodeGenerator {
         }
     }
 
+    private void checkCons(Class cl, Class[] consArgs, Object ... args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        cl.getDeclaredConstructor(consArgs).newInstance(args);
+
+    }
+
     public String genTest(InfoClass infoClass) {
+
+        //проверка
+        if(infoClass.getName().equals("Car")){
+            boolean flag=false;
+            while(!flag) {
+                try {
+                    System.out.println("RRRRRR0");
+
+                    Class[] cArg = new Class[2];
+                    cArg[0] = int.class;
+                    cArg[1] = int.class;
+
+                    Random random = new Random();
+                    int count = random.nextInt(4);
+                    System.out.println("Count: "+count);
+                    Object[] args = new Object[count];
+                    for(int i=0;i<count;i++) {
+                        args[i] = i*10;
+                    }
+
+                    checkCons(infoClass.getAClass(), cArg, args);
+                    System.out.println("RRRRRR1");
+                    flag = true;
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
         String test = "";
         test = test + "package " + infoClass.getClassPackage() + endOfLine;
         test = test + getAllHeaders();

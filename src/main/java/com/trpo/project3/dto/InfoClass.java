@@ -11,5 +11,6 @@ public class InfoClass {
     private ArrayList<InfoMethod> methods;
     private ArrayList<InfoField> fields;
     private ArrayList<InfoConstructor> constructors;
+    private Class aClass;
 
 }

@@ -96,6 +96,7 @@ public class ClassInformer {
 
         //System.out.println("AAAA: "+infoMethods.size());
         infoClass.setMethods(infoMethods);
+        infoClass.setAClass(cl);
 
         return infoClass;
     }

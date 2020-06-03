@@ -23,6 +23,8 @@ public class Generator {
 
         codeGenerator.printTestByNameClass("Car");
         PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();
+        char[] ch = new char[] {'f','f','g'};
+        //String str = new String(ch,54,55);
 
         //System.out.println(primitiveGenerator.getGenPrimString("short"));
 
