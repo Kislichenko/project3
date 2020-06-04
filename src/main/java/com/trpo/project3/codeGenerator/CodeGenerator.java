@@ -36,33 +36,7 @@ public class CodeGenerator {
 
     public String genTest(InfoClass infoClass) {
 
-        //проверка
-        if(infoClass.getName().equals("Car")){
-            boolean flag=false;
-            while(!flag) {
-                try {
-                    System.out.println("RRRRRR0");
 
-                    Class[] cArg = new Class[2];
-                    cArg[0] = int.class;
-                    cArg[1] = int.class;
-
-                    Random random = new Random();
-                    int count = random.nextInt(4);
-                    System.out.println("Count: "+count);
-                    Object[] args = new Object[count];
-                    for(int i=0;i<count;i++) {
-                        args[i] = i*10;
-                    }
-
-                    checkCons(infoClass.getAClass(), cArg, args);
-                    System.out.println("RRRRRR1");
-                    flag = true;
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
         String test = "";
         test = test + "package " + infoClass.getClassPackage() + endOfLine;
         test = test + getAllHeaders();
@@ -72,7 +46,7 @@ public class CodeGenerator {
         test = test + endBracket ;
 
         String formattedSource ="";
-        System.out.println(test);
+        //System.out.println(test);
         try {
             formattedSource += new com.google.googlejavaformat.java.Formatter().formatSource(test);
         } catch (FormatterException e) {

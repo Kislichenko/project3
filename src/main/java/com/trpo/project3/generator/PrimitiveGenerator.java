@@ -13,7 +13,7 @@ public class PrimitiveGenerator {
         }else if(type.equals("byte")){
             byte[] bt = new byte[1];
             random.nextBytes(bt);
-            return "" + bt;
+            return "0b10";
         }else if(type.equals("long")){
             return ""+random.nextLong();
         }else if(type.equals("float")){
