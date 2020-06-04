@@ -53,7 +53,7 @@ public class MethodCodeGenerator {
     public String getGenParams(InfoParameter infoPar){
 
         String str = "1";
-        if(infoPar.getType().getName().equals(infoPar.getType().getTypePackage())){
+        if(infoPar.getType().getName().equals(infoPar.getType().getTypePackage())||infoPar.getType().getName().equals("String")){
             str = primitiveGenerator.getGenPrimString(infoPar.getType().getName());
 
         }else{

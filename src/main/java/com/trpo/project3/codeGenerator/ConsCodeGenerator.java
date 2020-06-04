@@ -49,7 +49,7 @@ public class ConsCodeGenerator {
             ArrayList<InfoParameter> infoParameters = infoConstructor.getParameters();
             for (int i = 0; i < infoParameters.size(); i++) {
                 System.out.println("AAA: " + infoParameters.get(i).getType().getTypePackage() + " ;; " + infoParameters.get(i).getType().getName());
-                if (infoParameters.get(i).getType().getTypePackage().equals(infoParameters.get(i).getType().getName())) {
+                if (infoParameters.get(i).getType().getTypePackage().equals(infoParameters.get(i).getType().getName())||infoParameters.get(i).getType().getName().equals("String")) {
                     System.out.println("FFFF!!!");
                     cons = cons + primitiveGenerator.getGenPrimString(infoParameters.get(i).getType().getName()) + ",";
                 } else {
@@ -142,7 +142,7 @@ public class ConsCodeGenerator {
 
             Object[] args = new Object[constructor.getParameters().length];
             for (int i = 0; i < constructor.getParameters().length; i++) {
-                if (constructor.getParameters()[i].getType().getSimpleName().equals(constructor.getParameters()[i].getType().getTypeName())) {
+                if (constructor.getParameters()[i].getType().getSimpleName().equals(constructor.getParameters()[i].getType().getTypeName())||constructor.getParameters()[i].getType().getSimpleName().equals("String")) {
 
                     args[i] = primitiveGenerator.getGenPrimObj(constructor.getParameters()[i].getType().getSimpleName());
 

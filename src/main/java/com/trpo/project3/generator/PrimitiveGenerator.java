@@ -1,8 +1,16 @@
 package com.trpo.project3.generator;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class PrimitiveGenerator {
+
+    private static final String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
+    private static final String CHAR_UPPER = CHAR_LOWER.toUpperCase();
+    private static final String NUMBER = "0123456789";
+
+    private static final String DATA_FOR_RANDOM_STRING = CHAR_LOWER + CHAR_UPPER + NUMBER;
+    private static SecureRandom random1 = new SecureRandom();
 
     Random random = new Random();
 
@@ -26,9 +34,30 @@ public class PrimitiveGenerator {
             return ""+(char)(random.nextInt(127 - 32) + 32);
         }else if(type.equals("short")){
             return ""+(short) random.nextInt(Short.MAX_VALUE + 1);
-        }else{
+        }if(type.equals("String")){
+            return "\""+generateRandomString(8)+"\"";
+        }
+        else{
             return "";
         }
+
+
+    }
+    public static String generateRandomString(int length) {
+        if (length < 1) throw new IllegalArgumentException();
+
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+
+            // 0-62 (exclusive), random returns 0-61
+            int rndCharAt = random1.nextInt(DATA_FOR_RANDOM_STRING.length());
+            char rndChar = DATA_FOR_RANDOM_STRING.charAt(rndCharAt);
+
+            sb.append(rndChar);
+
+        }
+
+        return sb.toString();
 
     }
 

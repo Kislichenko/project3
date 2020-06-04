@@ -16,7 +16,7 @@ public class Car {
     private int cost;
     //private Integer old;
     private int counter=0;
-    //private ArrayList<Integer> nums;
+    //private ArrayList<String> nums;
     //private Auto auto;
     private int[] abr;
 
