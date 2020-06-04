@@ -91,6 +91,7 @@ public class CodeGenerator {
         String method = "";
         method = method + testAnnotation;
         method = method + "public void " + infoMethod.getName() + "()" + openBracket;
+        method = method  + methodCodeGenerator.genMthods(infoMethod);
 
 
         method = method + endBracket;

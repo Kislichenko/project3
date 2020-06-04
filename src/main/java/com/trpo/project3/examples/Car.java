@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @Setter
 @AllArgsConstructor
 public class Car {
-    //private String model;
+    private String model;
     private Cat cat;
     private int cost;
     //private Integer old;
@@ -20,14 +20,13 @@ public class Car {
     //private Auto auto;
     private int[] abr;
 
-//    public void setModelAndCost(String model1, int cost1){
-//        this.model = model1;
-//        this.cost = cost1;
-//    }
+    public void setModelAndCost(Cat cat, int cost1){
+        this.cat = cat;
+        this.cost = cost1;
+    }
 
     public void setCounter(int num){
         counter=++num;
-        setAbr(new int[]{-1922732115,-1573720254,1140155572});
     }
 
 //    public Integer getByNumber(int num){

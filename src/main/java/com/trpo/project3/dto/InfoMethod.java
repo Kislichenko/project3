@@ -10,4 +10,5 @@ public class InfoMethod {
     private InfoType returnType;
     private String modifiers;
     private ArrayList<InfoParameter> parameters;
+    private String nameClass;
 }

@@ -22,9 +22,10 @@ public class ConsCodeGenerator {
         Integer max = 0;
         InfoConstructor infoConstructor = null;
 
-        if (infoClass.getConstructors() == null) {
+        if (infoClass.getConstructors() == null || infoClass.getConstructors().size()==0) {
             return "";
         } else {
+            //System.out.println("PPPP: "+infoClass.getConstructors().size()+ " ; "+infoClass.getName());
             infoConstructor = infoClass.getConstructors().get(0);
             if (infoClass.getConstructors().get(0).getParameters() != null) {
                 max = infoClass.getConstructors().get(0).getParameters().size();

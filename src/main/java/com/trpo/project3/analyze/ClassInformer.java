@@ -75,6 +75,7 @@ public class ClassInformer {
         Method[] methods = cl.getDeclaredMethods();
         for(int i=0;i<methods.length;i++) {
             InfoMethod infoMethod = new InfoMethod();
+            infoMethod.setNameClass(cl.getSimpleName());
             infoMethod.setName(methods[i].getName());
             infoMethod.setModifiers(Modifier.toString(methods[i].getModifiers()));
             infoMethod.setReturnType(getInfoTypeForMethod(methods[i]));
