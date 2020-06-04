@@ -8,6 +8,8 @@ import com.trpo.project3.dto.InfoParameter;
 import com.trpo.project3.generator.PrimitiveGenerator;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -50,7 +52,8 @@ public class ConsCodeGenerator {
                     System.out.println("FFFF!!!");
                     cons = cons + primitiveGenerator.getGenPrimString(infoParameters.get(i).getType().getName()) + ",";
                 } else {
-                    initBefore = genForHardObj(infoParameters.get(i).getType().getTypePackage(), infoParameters.get(i).getName());
+                    initBefore = initBefore+genForHardObj(infoParameters.get(i).getType().getTypePackage(), infoParameters.get(i).getName());
+                    System.out.println("INIT BEFORE "+ initBefore);
                     cons = cons + infoParameters.get(i).getName() + ",";
                 }
             }
@@ -58,6 +61,7 @@ public class ConsCodeGenerator {
         } else {
             cons = cons + "); ";
         }
+        System.out.println("INIT BEFORE1 "+ initBefore);
 
         return initBefore + cons;
 
@@ -97,6 +101,7 @@ public class ConsCodeGenerator {
 
                         for (int i = 0; i < repeat; i++) {
                             System.out.println("KKKKK");
+                            System.out.println("DDDD: "+constructors.length);
                             String genStr = genHard(c, constructors[innerIndex % constructors.length], argName);
                             if (!genStr.equals("")) return genStr;
                         }
@@ -134,59 +139,88 @@ public class ConsCodeGenerator {
             String[] parameterNames = paranamer.lookupParameterNames(constructor, false);
 
 
+            Object[] args = new Object[constructor.getParameters().length];
             for (int i = 0; i < constructor.getParameters().length; i++) {
                 if (constructor.getParameters()[i].getType().getSimpleName().equals(constructor.getParameters()[i].getType().getTypeName())) {
 
+                    args[i] = primitiveGenerator.getGenPrimObj(constructor.getParameters()[i].getType().getSimpleName());
 
-                    str = str + constructor.getParameters()[i].getType().getSimpleName() + " " + cl.getSimpleName() + parameterNames[i] +
-                            " = " + primitiveGenerator.getGenPrimString(constructor.getParameters()[i].getType().getSimpleName()) + "; ";
+//                    str = str + constructor.getParameters()[i].getType().getSimpleName() + " " + cl.getSimpleName() + parameterNames[i] +
+//                            " = " + primitiveGenerator.getGenPrimString(constructor.getParameters()[i].getType().getSimpleName()) + "; ";
 
                 } else {
+                    System.out.println("TTTTT0: "+constructor.getParameters()[i].getType().getTypeName() + " ; "+constructor.getParameters()[i].getName());
+                    //String str1 = genForHardObj(constructor.getParameters()[i].getType().getTypeName(), constructor.getParameters()[i].getName());
+                    //System.out.println("TTTTT1: "+str1);
                     //запуск рекурсии
                 }
 
             }
+            if(checkObj(cl, constructor.getParameters(), args)){
+                for(int i=0;i<constructor.getParameters().length;i++){
+                    str = str + constructor.getParameters()[i].getType().getSimpleName() + " " + cl.getSimpleName() + parameterNames[i] +
+                            " = " + String.valueOf(args[i]) + "; ";
+                }
+            }else {
+                return "";
+            }
+
         } else {
             str = str + cl.getSimpleName() + " " + name + " = new " + cl.getSimpleName() + "(); ";
         }
 
-        str = str + cl.getSimpleName() + " " + cl.getSimpleName().substring(0, 1).toLowerCase()
-                + cl.getSimpleName().substring(1) + " = " + "new " + cl.getSimpleName() + "(";
+
+        str = str + cl.getSimpleName() + " " + name + " = " + "new " + cl.getSimpleName() + "(";
+
         for (int i = 0; i < constructor.getParameters().length; i++) {
             str = str + cl.getSimpleName() + constructor.getParameters()[i].getName() + ",";
         }
+        if(constructor.getParameters().length>0){
+            System.out.println("UUUU: " + name + " ; " + str.substring(0, str.length() - 1) + "); ");
+            return str.substring(0, str.length() - 1) + "); ";
+        }else{
+            System.out.println("UUUU: " + name + " ; " +str + "); ");
+            return str+ "); ";
+        }
 
-        System.out.println("UUUU: " + name + " ; " + str.substring(0, str.length() - 1) + "); ");
-        return str.substring(0, str.length() - 1) + "); ";
+
+        //return
     }
 
-    private boolean checkObj() {
+    private boolean checkObj(Class cl, Parameter[] parameters, Object[] args) {
         //проверка
         boolean flag = false;
-        while (!flag) {
+        //while (!flag) {
             try {
                 System.out.println("RRRRRR0");
 
-                Class[] cArg = new Class[2];
-                cArg[0] = int.class;
-                cArg[1] = int.class;
-
-                Random random = new Random();
-                int count = random.nextInt(4);
-                System.out.println("Count: " + count);
-                Object[] args = new Object[count];
-                for (int i = 0; i < count; i++) {
-                    args[i] = i * 10;
+                Class[] cArg = new Class[parameters.length];
+                for(int i=0;i<parameters.length;i++){
+                    System.out.println("YYYY: "+parameters[i].getType().getTypeName());
+                    if(parameters[i].getType().getTypeName().substring(parameters[i].getType().getTypeName().length()-2).equals("[]")){
+                        cArg[i] = byte[].class;
+                    } else if(parameters[i].getType().getTypeName().equals("int")){
+                        cArg[i] = int.class;
+                    }
+                    else{
+                        cArg[i] = Class.forName(parameters[i].getType().getTypeName());
+                    }
                 }
 
-                //checkCons(infoClass.getAClass(), cArg, args);
+                checkCons(cl, cArg, args);
                 System.out.println("RRRRRR1");
                 flag = true;
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
-        }
-        return false;
+        //}
+        if(flag) return true;
+        else return false;
+    }
+
+    private void checkCons(Class cl, Class[] consArgs, Object ... args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        cl.getDeclaredConstructor(consArgs).newInstance(args);
+
     }
 
 

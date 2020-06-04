@@ -11,27 +11,27 @@ import java.util.ArrayList;
 @Setter
 @AllArgsConstructor
 public class Car {
-    private String model;
+    //private String model;
     private Cat cat;
     private int cost;
     //private Integer old;
     private int counter=0;
     //private ArrayList<Integer> nums;
     //private Auto auto;
-    //private int[] abr;
+    private int[] abr;
 
-   // public void setModelAndCost(String model1, int cost1){
-        //this.model = model1;
-        //this.cost = cost1;
-        //byte[] arg0 = new byte[]{0b10};
-    //}
+//    public void setModelAndCost(String model1, int cost1){
+//        this.model = model1;
+//        this.cost = cost1;
+//    }
 
-    /*public void setCounter(int num){
+    public void setCounter(int num){
         counter=++num;
-    }*/
+        setAbr(new int[]{-1922732115,-1573720254,1140155572});
+    }
 
-    /*public Integer getByNumber(int num){
-        return nums.get(num);
-    }*/
+//    public Integer getByNumber(int num){
+//        return nums.get(num);
+//    }
 
 }

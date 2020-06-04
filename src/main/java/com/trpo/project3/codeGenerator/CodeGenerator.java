@@ -22,6 +22,7 @@ public class CodeGenerator {
     private Map<String, String> classTests = new HashMap<>();
     Set<String> neededPackages = new HashSet<>();
     ConsCodeGenerator consCodeGenerator = new ConsCodeGenerator();
+    MethodCodeGenerator methodCodeGenerator = new MethodCodeGenerator();
 
     public void genTests(ArrayList<InfoClass> infoClasses) {
         for (int i = 0; i < infoClasses.size(); i++) {
@@ -29,10 +30,7 @@ public class CodeGenerator {
         }
     }
 
-    private void checkCons(Class cl, Class[] consArgs, Object ... args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        cl.getDeclaredConstructor(consArgs).newInstance(args);
 
-    }
 
     public String genTest(InfoClass infoClass) {
 
@@ -42,6 +40,7 @@ public class CodeGenerator {
         test = test + getAllHeaders();
         test = test + "class " + infoClass.getName() + "Test" + openBracket;
         test = test + consCodeGenerator.genInitCons(infoClass);
+        //test = test + methodCodeGenerator.genMthods(infoClass);
         test = test + genMethodTests(infoClass.getMethods());
         test = test + endBracket ;
 
