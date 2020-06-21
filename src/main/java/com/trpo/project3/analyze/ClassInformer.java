@@ -52,7 +52,12 @@ public class ClassInformer {
         infoClass.setName(cl.getSimpleName());
 
         //сохранение пакета класса
-        infoClass.setClassPackage(cl.getPackage().getName());
+
+        if(cl.getTypeName().contains("[]")){
+            infoClass.setClassPackage(cl.getTypeName().substring(0,cl.getTypeName().indexOf("[]")));
+        }else {
+            infoClass.setClassPackage(cl.getPackage().getName());
+        }
 
         //сохранение информации о конструкторах
         infoClass.setConstructors(analyzeConstructors(cl));

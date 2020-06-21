@@ -39,6 +39,7 @@ public class CodeGenerator {
      */
     public void printTestByNameClass(String className) {
         System.out.println("Test for class '" + className + "'!!!");
+        System.out.println(classTests.size());
         System.out.println(classTests.get(className));
         System.out.println();
     }
@@ -51,6 +52,8 @@ public class CodeGenerator {
      */
     private String genTest(InfoClass infoClass) {
 
+        System.out.println("AAAAAAAAAA: "+infoClass.getName());
+
         String test = genPackage(infoClass.getClassPackage())
                 + getAllHeaders(infoClass)
                 + genClassA(infoClass.getName())
@@ -58,13 +61,14 @@ public class CodeGenerator {
                 + genMethodTests(infoClass.getMethods())
                 + CLOSE_BLOCK;
 
+        //return test;
         try {
+
             return new com.google.googlejavaformat.java.Formatter().formatSource(test);
         } catch (FormatterException e) {
             e.printStackTrace();
+            return test;
         }
-
-        return "";
     }
 
     /**
@@ -74,7 +78,7 @@ public class CodeGenerator {
      * @return - код инициализации используемых классов.
      */
     private String genBeforeConstructors(InfoClass infoClass) {
-        return (new ConsCodeGenerator()).genInitCons(infoClass);
+        return (new ObjectCreator()).createCons(infoClass);
     }
 
     /**
@@ -84,6 +88,7 @@ public class CodeGenerator {
      * @return строку пакета.
      */
     private String genPackage(String packageName) {
+        System.out.println("YES");
         return PACKAGE + packageName + END_LINE;
     }
 
@@ -153,7 +158,7 @@ public class CodeGenerator {
                 + infoMethod.getName()
                 + EMPTY_BRACKETS
                 + OPEN_BLOCK
-                //+ (new MethodCodeGenerator()).genMthods(infoMethod)
+                + (new ObjectCreator()).createObjectMethods(infoMethod)
                 + CLOSE_BLOCK;
     }
 }

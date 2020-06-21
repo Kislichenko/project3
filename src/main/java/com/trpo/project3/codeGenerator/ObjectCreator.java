@@ -23,11 +23,43 @@ public class ObjectCreator {
     PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();
     private List<String> primitives = Arrays.asList("int", "float", "byte", "long", "double",
             "char", "short", "boolean", "String", "int[]", "float[]", "byte[]", "long[]", "double[]",
-            "char[]", "chort[]", "boolean[]", "String[]");
+            "char[]", "short[]", "boolean[]", "String[]");
+
+    public String createCons(InfoClass infoClass) {
+        StringObject stringObject = createObjectCons(infoClass);
+        return ""+infoClass.getName() +" "
+                +utils.firstLetterToLowCase(infoClass.getName())
+                +" = " + stringObject.getStrObject()+";";
+    }
+
+    public StringObject createObjectConsByClass(Class cl){
+        InfoClass infoClass = (new ClassInformer()).genFromClass(cl);
+        return createObjectCons(infoClass);
+    }
+
+    public String createObjectMethods(InfoMethod infoMethod){
+        GenArgs args = genArgs(infoMethod.getParameters());
+        System.out.println("TTT000");
+        System.out.println(args.getGenArgs());
+        System.out.println(infoMethod.getNameClass());
+        System.out.println(infoMethod.getName());
+        String arguments = "";
+
+        if(args.getGenArgs().size()>0) {
+            for (int i = 0; i < args.getGenArgs().size(); i++) {
+                arguments += args.getGenArgs().get(i) + ",";
+            }
+            arguments = arguments.substring(0, arguments.length()-1);
+        }
+
+        return ""+utils.firstLetterToLowCase(infoMethod.getNameClass())
+                +"."+infoMethod.getName()
+                +"("+arguments
+                +"); ";
+    }
 
     // метод для создание объекта с простыми параметрами через конструктор
-    public StringObject createSimpleObjectCons(Class cl) {
-        InfoClass infoClass = (new ClassInformer()).genFromClass(cl);
+    public StringObject createObjectCons(InfoClass infoClass) {
 
         //получаем список всех конструторов класса
         ArrayList<InfoConstructor> infoConstructors = infoClass.getConstructors();
@@ -49,7 +81,7 @@ public class ObjectCreator {
                 if (infoConstructor.getParameters().size() == maxNumParam) {
                     for (int i = 0; i < ATTEMPT; i++) {
                         //пытаемся сгенерировать корректные параметры для конструтора
-                        args = genArgs(infoConstructor);
+                        args = genArgs(infoConstructor.getParameters());
                         System.out.println("TTTTTTT: " + args.getObjects());
                         System.out.println("TTTTTTT2: " + args.getGenArgs());
 
@@ -75,14 +107,15 @@ public class ObjectCreator {
 
 
         if (isCorrect != null) {
-            return new StringObject(isCorrect, utils.createConsA(cl.getSimpleName(), args.getGenArgs()));
+            return new StringObject(isCorrect, utils.createConsA(infoClass.getName(), args.getGenArgs()));
         } else {
             return new StringObject(null, "");
         }
     }
 
-    private GenArgs genArgs(InfoConstructor infoConstructor) {
-        ArrayList<InfoParameter> infoParameters = infoConstructor.getParameters();
+
+    private GenArgs genArgs(ArrayList<InfoParameter> infoParameters) {
+        //ArrayList<InfoParameter> infoParameters = infoConstructor.getParameters();
         Object[] objects = new Object[infoParameters.size()];
         List<String> strings = new ArrayList<>();
 
@@ -98,9 +131,17 @@ public class ObjectCreator {
             } else {
 
                 //рекурсивно генерируем сложные объекты
+                System.out.println("HARD0: " + infoParameters.get(i).getType().getName());
                 System.out.println("HARD: " + infoParameters.get(i).getType().getTypePackage());
                 try {
-                    stringObject = createSimpleObjectCons(Class.forName(infoParameters.get(i).getType().getTypePackage()));
+                    String strName = infoParameters.get(i).getType().getTypePackage();
+
+                    if(strName.contains("[]")){
+                        stringObject = createObjectConsByClass(getArrayClass(Class.forName(strName.substring(0,strName.indexOf("[]")))));
+                    }else {
+                        stringObject = createObjectConsByClass(Class.forName(infoParameters.get(i).getType().getTypePackage()));
+                    }
+
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -123,7 +164,7 @@ public class ObjectCreator {
             Class[] cArg = new Class[infoParameters.size()];
 
             for (int i = 0; i < infoParameters.size(); i++) {
-                System.out.println("CHECK: " + infoParameters.get(i).getType().getTypePackage());
+                System.out.println("CHECK: " + infoParameters.get(i).getType().getTypePackage() + " ;; "+infoParameters.get(i).getName() + " ;;; "+cl.getSimpleName());
                 cArg[i] = getClass(infoParameters.get(i).getType().getTypePackage());
             }
             System.out.println();
@@ -167,6 +208,11 @@ public class ObjectCreator {
     private Object checkCons(Class cl, Class[] consArgs, Object[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Arrays.stream(consArgs).forEach(arg -> System.out.println(arg.getSimpleName()));
         Arrays.stream(args).forEach(arg -> System.out.println("DD: " + arg));
+
+        //плохая защита от переаолнения массивов
+        if(cl.getSimpleName().contains("List")){
+            return null;
+        }
 
         return cl.getDeclaredConstructor(consArgs).newInstance(args);
 
