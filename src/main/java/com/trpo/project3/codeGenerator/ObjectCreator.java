@@ -3,6 +3,7 @@ package com.trpo.project3.codeGenerator;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.trpo.project3.analyze.ClassInformer;
+import com.trpo.project3.analyze.ClassScanner;
 import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.dto.InfoConstructor;
 import com.trpo.project3.dto.InfoParameter;
@@ -30,8 +31,9 @@ public class ObjectCreator {
     Utils utils = new Utils();
     PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();
 
+
     // метод для создание объекта с простыми параметрами через конструктор
-    public String createSimpleObjectCons(Class cl){
+    public StringObject createSimpleObjectCons(Class cl){
         InfoClass infoClass = (new ClassInformer()).genFromClass(cl);
 
         //получаем список всех конструторов класса
@@ -48,13 +50,14 @@ public class ObjectCreator {
         //перебираем все конструкторы до тех пор, пока не останется ни одного конструктора
         //к которому не были применено ATTEMPT попыток создать объект
         boolean isCorrect = false;
+        List<String> args = new ArrayList<>();
         while (infoConstructors.size()>0 && !isCorrect) {
             for (InfoConstructor infoConstructor : infoConstructors) {
                 if (infoConstructor.getParameters().size() == maxNumParam) {
                     for (int i = 0; i < ATTEMPT; i++) {
                         //пытаемся сгенерировать корректные параметры для конструтора
-                        List<String> args = genArgs(infoConstructor);
-                        System.out.println(utils.createConsA(cl.getSimpleName(), args));
+                        args = genArgs(infoConstructor);
+                        //System.out.println(utils.createConsA(cl.getSimpleName(), args));
 
                         //проверяем корректность сгенерированных аргументов конструктора
                         //isCorrect = checkObj(infoClass.getAClass(), null, args);
@@ -75,7 +78,7 @@ public class ObjectCreator {
         }
 
 
-        return "";
+        return new StringObject(args, utils.createConsA(cl.getSimpleName(), args));
     }
 
     private List<String> genArgs(InfoConstructor infoConstructor){
@@ -91,7 +94,16 @@ public class ObjectCreator {
                 strings.add(stringObject.getStrObject());
                 //System.out.println(stringObject.getStrObject());
             }else{
-                 //генерация сложных объектов
+
+                System.out.println(infoParameters.get(i).getType().getTypePackage());
+                try {
+                    StringObject stringObject  = createSimpleObjectCons(Class.forName(infoParameters.get(i).getType().getTypePackage()));
+                    objects[i] = stringObject.getObject();
+                    strings.add(stringObject.getStrObject());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                //генерация сложных объектов
             }
         }
 

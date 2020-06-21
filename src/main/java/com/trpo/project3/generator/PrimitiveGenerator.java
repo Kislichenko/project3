@@ -64,7 +64,7 @@ public class PrimitiveGenerator {
         Object[] objects = new Object[size];
 
         StringObject stringObjectFirst = genSimple(type.substring(0,type.length()-2));
-        objects[0] = stringObjectFirst.getObject();
+        //objects[0] = stringObjectFirst.getObject(); // какая-то ошибка !!!!!!
 
         String genStr="new "+type+"{"+stringObjectFirst.getObject();
         for(int i=1;i<size;i++) {

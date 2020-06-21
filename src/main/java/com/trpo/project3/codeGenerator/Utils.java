@@ -43,10 +43,7 @@ public class Utils {
     //генерация кода инициализации через конструктор
     public String createConsA(String className, List<String> params){
 
-        String cons = "" + className
-                + " "
-                +firstLetterToLowCase(className)
-                + " = new "
+        String cons = " new "
                 + className + "(";
 
         if(params.size()>0) {
@@ -56,7 +53,7 @@ public class Utils {
             cons = cons.substring(0, cons.length()-1);
         }
 
-        cons+=");";
+        cons+=")";
 
         return cons;
     }
