@@ -2,8 +2,13 @@ package com.trpo.project3.generator;
 
 import com.trpo.project3.dto.StringObject;
 
+import java.lang.reflect.Array;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 public class PrimitiveGenerator {
 
@@ -57,24 +62,66 @@ public class PrimitiveGenerator {
         }
     }
 
-
+//IntStream.generate(() -> new Random().nextInt(100)).limit(100).toArray();
     //метод генерации массива примитивов
     private StringObject genPrimArray(String type){
         int size = random.nextInt(10);
-        Object[] objects = new Object[size];
 
-        StringObject stringObjectFirst = genSimple(type.substring(0,type.length()-2));
-        //objects[0] = stringObjectFirst.getObject(); // какая-то ошибка !!!!!!
+        if(type.equals("int[]")){
+            int[] tmp = new int[size];
+            IntStream.range(0, size).forEach(i -> tmp[i] = random.nextInt());
 
-        String genStr="new "+type+"{"+stringObjectFirst.getObject();
-        for(int i=1;i<size;i++) {
-            StringObject stringObject = genSimple(type.substring(0,type.length()-2));
+            return new StringObject(tmp, "new "+type+"{"+
+                    Arrays.toString(tmp).substring(1,Arrays.toString(tmp).length()-1)+"}");
+        }
+        else if(type.equals("byte[]")){
+            byte[] bt = new byte[1];
+            random.nextBytes(bt);
+            return new StringObject( "0b10", "0b10");
+        }
+        else if(type.equals("long[]")){
+            long[] tmp = new long[size];
+            IntStream.range(0, size).forEach(i -> tmp[i] = random.nextLong());
+            return new StringObject(tmp, "new "+type+"{"+
+                    Arrays.toString(tmp).substring(1,Arrays.toString(tmp).length()-1)+"}");
+        }
+        else if(type.equals("float[]")){
+            float[] tmp = new float[size];
+            IntStream.range(0, size).forEach(i -> tmp[i] = random.nextFloat());
+            return new StringObject(tmp, "new "+type+"{"+
+                    Arrays.toString(tmp).substring(1,Arrays.toString(tmp).length()-1)+"}");
+        }
+        else if(type.equals("double[]")){
+            double[] tmp = new double[size];
+            IntStream.range(0, size).forEach(i -> tmp[i] = random.nextDouble());
+            return new StringObject(tmp, "new "+type+"{"+
+                    Arrays.toString(tmp).substring(1,Arrays.toString(tmp).length()-1)+"}");
+        }
+        else if(type.equals("boolean[]")){
+            boolean[] tmp = new boolean[size];
+            IntStream.range(0, size).forEach(i -> tmp[i] = random.nextBoolean());
+            return new StringObject(tmp, "new "+type+"{"+
+                    Arrays.toString(tmp).substring(1,Arrays.toString(tmp).length()-1)+"}");
+        }
+        else if(type.equals("char[]")){
+            return new StringObject( (char)(random.nextInt(127 - 32) + 32),
+                    ""+(char)(random.nextInt(127 - 32) + 32));
+        }
+        else if(type.equals("short[]")){
+            short[] tmp = new short[size];
+            IntStream.range(0, size).forEach(i -> tmp[i] = (short)random.nextInt(Short.MAX_VALUE + 1));
+            return new StringObject(tmp, "new "+type+"{"+
+                    Arrays.toString(tmp).substring(1,Arrays.toString(tmp).length()-1)+"}");
 
-            genStr=genStr+","+stringObject.getStrObject();
-            objects[i] = stringObject.getObject();
+        }
+        if(type.equals("String[]")){
+            return new StringObject( "\""+generateRandomString(8)+"\"",
+                    "\""+generateRandomString(8)+"\"");
+        }
+        else{
+            return new StringObject( null, "");
         }
 
-        return new StringObject(objects, genStr+"}");
     }
 
 

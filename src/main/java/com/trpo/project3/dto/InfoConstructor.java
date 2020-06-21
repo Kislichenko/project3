@@ -15,4 +15,5 @@ public class InfoConstructor {
     private String name;
     private String modifiers;
     private ArrayList<InfoParameter> parameters;
+    private Class aClass;
 }

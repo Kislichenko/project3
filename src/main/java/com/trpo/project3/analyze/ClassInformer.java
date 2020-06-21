@@ -2,6 +2,7 @@ package com.trpo.project3.analyze;
 
 import com.thoughtworks.paranamer.BytecodeReadingParanamer;
 import com.thoughtworks.paranamer.Paranamer;
+import com.thoughtworks.paranamer.PositionalParanamer;
 import com.trpo.project3.dto.*;
 
 import java.lang.reflect.*;
@@ -122,6 +123,7 @@ public class ClassInformer {
                 .name(cl.getSimpleName())
                 .modifiers(Modifier.toString(constructor.getModifiers()))
                 .parameters(analyzeParameters(constructor))
+                .aClass(cl)
                 .build()
 
         ));
@@ -141,9 +143,13 @@ public class ClassInformer {
         ArrayList<InfoParameter> infoParameters = new ArrayList<>();
         Parameter[] parameters = obj.getParameters();
 
+        //!!!! ошибка для классов, которые не были скомпилированы
         //анализ имен параметров метода или конструктора из байт-кода
-        String[] parameterNames = (new BytecodeReadingParanamer())
-                .lookupParameterNames(obj, false);
+//        String[] parameterNames = (new BytecodeReadingParanamer())
+//                .lookupParameterNames(obj, false);
+
+        String[] parameterNames = (new PositionalParanamer())
+                 .lookupParameterNames(obj, false);
 
         IntStream.range(0, parameters.length).forEach(i -> {
             infoParameters.add(InfoParameter
