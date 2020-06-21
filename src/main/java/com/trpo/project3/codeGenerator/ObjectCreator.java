@@ -1,6 +1,7 @@
 package com.trpo.project3.codeGenerator;
 
 import com.trpo.project3.analyze.ClassInformer;
+import com.trpo.project3.analyze.ClassScanner;
 import com.trpo.project3.dto.*;
 import com.trpo.project3.generator.PrimitiveGenerator;
 
@@ -82,6 +83,7 @@ public class ObjectCreator {
                     for (int i = 0; i < ATTEMPT; i++) {
                         //пытаемся сгенерировать корректные параметры для конструтора
                         args = genArgs(infoConstructor.getParameters());
+                        System.out.println("TTTTTT0: "+infoConstructor.getModifiers());
                         System.out.println("TTTTTTT: " + args.getObjects());
                         System.out.println("TTTTTTT2: " + args.getGenArgs());
 
@@ -133,6 +135,11 @@ public class ObjectCreator {
                 //рекурсивно генерируем сложные объекты
                 System.out.println("HARD0: " + infoParameters.get(i).getType().getName());
                 System.out.println("HARD: " + infoParameters.get(i).getType().getTypePackage());
+                if(infoParameters.get(i).getModifiers().contains("interface")){
+                    System.out.println("EEEEEEEE");
+                    findImplForInterface();
+                }
+
                 try {
                     String strName = infoParameters.get(i).getType().getTypePackage();
 
@@ -155,6 +162,26 @@ public class ObjectCreator {
         }
 
         return new GenArgs(strings, objects);
+    }
+
+    private void findImplForInterface(){
+        ClassScanner classScanner = new ClassScanner();
+        classScanner.scanPath();
+        List<Class> classes = classScanner.getScannedClasses();
+        Class cl = null;
+        for(int i=0;i<classes.size();i++){
+            if(classes.get(i).getSimpleName().contains("Test8")){
+                cl = classes.get(i);
+
+            }
+        }
+        for(int i=0;i<classes.size();i++){
+            if(cl.isAssignableFrom(classes.get(i))){
+                System.out.println(classes.get(i).getName());
+
+                System.out.println("WWWWWWW88888888");
+            }
+        }
     }
 
     //проверка того, что созданный коснтруктор не ломается

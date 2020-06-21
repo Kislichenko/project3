@@ -52,7 +52,6 @@ public class ClassInformer {
         infoClass.setName(cl.getSimpleName());
 
         //сохранение пакета класса
-
         if(cl.getTypeName().contains("[]")){
             infoClass.setClassPackage(cl.getTypeName().substring(0,cl.getTypeName().indexOf("[]")));
         }else {
@@ -70,6 +69,7 @@ public class ClassInformer {
 
         //сохранение класса на всякий случай
         infoClass.setAClass(cl);
+
 
         return infoClass;
     }
@@ -161,6 +161,7 @@ public class ClassInformer {
                     .builder()
                     .name(parameterNames[i])
                     .type(getParameterInfoType(parameters[i]))
+                    .modifiers(Modifier.toString(parameters[i].getType().getModifiers()))
                     .build());
         });
 
@@ -229,6 +230,7 @@ public class ClassInformer {
                 System.out.println("Con Param name1: " + parameters[j].getName());
                 System.out.println("Con Param type: " + parameters[j].getType().getTypeName());
                 System.out.println("Con Param type: " + parameters[j].getType().getSimpleName());
+                System.out.println("Con Param type: " + Modifier.toString(parameters[j].getType().getModifiers()));
                 System.out.println();
             }
         }

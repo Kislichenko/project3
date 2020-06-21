@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class InfoParameter {
     private String name;
     private InfoType type;
+    private String modifiers;
 }
