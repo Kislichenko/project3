@@ -1,5 +1,7 @@
 package com.trpo.project3.generator;
 
+import com.trpo.project3.dto.StringObject;
+
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -14,42 +16,75 @@ public class PrimitiveGenerator {
 
     Random random = new Random();
 
-    private String genSimple(String type){
+    public StringObject getGenPrim(String type){
+        if(type.substring(type.length()-2).equals("[]")){
+            return genPrimArray(type);
+        }else {
+            return genSimple(type);
+        }
+    }
+
+
+    //генерация примитива
+    private StringObject genSimple(String type){
 
         if(type.equals("int")){
-            return ""+random.nextInt();
+            return new StringObject(random.nextInt(), ""+random.nextInt());
         }else if(type.equals("byte")){
             byte[] bt = new byte[1];
             random.nextBytes(bt);
-            return "0b10";
+            return new StringObject( "0b10", "0b10");
         }else if(type.equals("long")){
-            return ""+random.nextLong();
+            return new StringObject( random.nextLong(), ""+random.nextLong());
         }else if(type.equals("float")){
-            return ""+random.nextFloat();
+            return new StringObject( random.nextFloat(),""+random.nextFloat());
         }else if(type.equals("double")){
-            return ""+random.nextDouble();
+            return new StringObject( random.nextDouble(), ""+random.nextDouble());
         }else if(type.equals("boolean")){
-            return ""+random.nextBoolean();
+            return new StringObject( random.nextBoolean(), ""+random.nextBoolean());
         }else if(type.equals("char")){
-            return ""+(char)(random.nextInt(127 - 32) + 32);
+            return new StringObject( (char)(random.nextInt(127 - 32) + 32),
+                    ""+(char)(random.nextInt(127 - 32) + 32));
         }else if(type.equals("short")){
-            return ""+(short) random.nextInt(Short.MAX_VALUE + 1);
+            return new StringObject( (short) random.nextInt(Short.MAX_VALUE + 1),
+                    ""+(short) random.nextInt(Short.MAX_VALUE + 1));
         }if(type.equals("String")){
-            return "\""+generateRandomString(8)+"\"";
+            return new StringObject( "\""+generateRandomString(8)+"\"",
+                    "\""+generateRandomString(8)+"\"");
         }
         else{
-            return "";
+            return new StringObject( null, "");
+        }
+    }
+
+
+    //метод генерации массива примитивов
+    private StringObject genPrimArray(String type){
+        int size = random.nextInt(10);
+        Object[] objects = new Object[size];
+
+        StringObject stringObjectFirst = genSimple(type.substring(0,type.length()-2));
+        objects[0] = stringObjectFirst.getObject();
+
+        String genStr="new "+type+"{"+stringObjectFirst.getObject();
+        for(int i=1;i<size;i++) {
+            StringObject stringObject = genSimple(type.substring(0,type.length()-2));
+
+            genStr=genStr+","+stringObject.getStrObject();
+            objects[i] = stringObject.getObject();
         }
 
-
+        return new StringObject(objects, genStr+"}");
     }
-    public static String generateRandomString(int length) {
+
+
+    //метод генерации строки
+    private String generateRandomString(int length) {
         if (length < 1) throw new IllegalArgumentException();
 
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
 
-            // 0-62 (exclusive), random returns 0-61
             int rndCharAt = random1.nextInt(DATA_FOR_RANDOM_STRING.length());
             char rndChar = DATA_FOR_RANDOM_STRING.charAt(rndCharAt);
 
@@ -58,70 +93,6 @@ public class PrimitiveGenerator {
         }
 
         return sb.toString();
-
-    }
-
-    private Object genSimpleObj(String type){
-
-        if(type.equals("int")){
-            return random.nextInt();
-        }else if(type.equals("byte")){
-            byte[] bt = new byte[1];
-            random.nextBytes(bt);
-            return "0b10";
-        }else if(type.equals("long")){
-            return random.nextLong();
-        }else if(type.equals("float")){
-            return random.nextFloat();
-        }else if(type.equals("double")){
-            return random.nextDouble();
-        }else if(type.equals("boolean")){
-            return random.nextBoolean();
-        }else if(type.equals("char")){
-            return (char)(random.nextInt(127 - 32) + 32);
-        }else if(type.equals("short")){
-            return (short) random.nextInt(Short.MAX_VALUE + 1);
-        }else{
-            return null;
-        }
-
-    }
-
-    private Object[] genPrimArrayObj(String type){
-        int size = random.nextInt(10);
-        //String genStr="new "+type+"{"+genSimple(type.substring(0,type.length()-2));
-        Object[] objects = new Object[size];
-        for(int i=1;i<size;i++) {
-            objects[i] = genSimpleObj(type.substring(0,type.length()-2));
-        }
-
-        return objects;
-    }
-
-    private String genPrimArray(String type){
-        int size = random.nextInt(10);
-        String genStr="new "+type+"{"+genSimple(type.substring(0,type.length()-2));
-        for(int i=1;i<size;i++) {
-            genStr=genStr+","+genSimple(type.substring(0,type.length()-2));
-        }
-
-        return genStr+"}";
-    }
-
-    public Object getGenPrimObj(String type){
-        if(type.substring(type.length()-2).equals("[]")){
-            return genPrimArrayObj(type);
-        }else {
-            return genSimpleObj(type);
-        }
-    }
-
-    public String getGenPrimString(String type){
-        if(type.substring(type.length()-2).equals("[]")){
-            return genPrimArray(type);
-        }else {
-            return genSimple(type);
-        }
     }
 
 }

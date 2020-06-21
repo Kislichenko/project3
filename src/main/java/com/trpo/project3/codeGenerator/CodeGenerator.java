@@ -153,7 +153,7 @@ public class CodeGenerator {
                 + infoMethod.getName()
                 + EMPTY_BRACKETS
                 + OPEN_BLOCK
-                + (new MethodCodeGenerator()).genMthods(infoMethod)
+                //+ (new MethodCodeGenerator()).genMthods(infoMethod)
                 + CLOSE_BLOCK;
     }
 }

@@ -23,9 +23,12 @@ public class ConsCodeGenerator {
     private final int repeat = 3;
 
     public String genInitCons(InfoClass infoClass) {
+
+        //находим конструктор с максимальным числом аргументов
         Integer max = 0;
         InfoConstructor infoConstructor = null;
 
+        //инциализируем первым конструктором
         if (infoClass.getConstructors() == null || infoClass.getConstructors().size()==0) {
             return "";
         } else {
@@ -35,6 +38,8 @@ public class ConsCodeGenerator {
                 max = infoClass.getConstructors().get(0).getParameters().size();
             }
         }
+
+        //перебираем остальные конструкторы
         for (int i = 1; i < infoClass.getConstructors().size(); i++) {
             if (infoClass.getConstructors().get(i).getParameters() != null &&
                     max <= infoClass.getConstructors().get(i).getParameters().size()) {
@@ -43,20 +48,27 @@ public class ConsCodeGenerator {
             }
         }
 
+        //создаем шаблон инициализации конструктора
         String initBefore = "";
         String cons = "" + infoClass.getName() +
                 " " + infoClass.getName().substring(0, 1).toLowerCase()
                 + infoClass.getName().substring(1) + " = new "
                 + infoClass.getName() + "(";
 
+        //рекурсивно создаем и заполняем параметры конструктора
         if (infoConstructor.getParameters() != null && infoConstructor.getParameters().size() != 0) {
             ArrayList<InfoParameter> infoParameters = infoConstructor.getParameters();
             for (int i = 0; i < infoParameters.size(); i++) {
                 System.out.println("AAA: " + infoParameters.get(i).getType().getTypePackage() + " ;; " + infoParameters.get(i).getType().getName());
+
+                //если параметр примитивный
                 if (infoParameters.get(i).getType().getTypePackage().equals(infoParameters.get(i).getType().getName())||infoParameters.get(i).getType().getName().equals("String")) {
                     System.out.println("FFFF!!!");
-                    cons = cons + primitiveGenerator.getGenPrimString(infoParameters.get(i).getType().getName()) + ",";
-                } else {
+                    //cons = cons + primitiveGenerator.getGenPrimString(infoParameters.get(i).getType().getName()) + ",";
+                }
+
+                //если параметр не примитивный, то запускаем рекурсию
+                else {
                     initBefore = initBefore+genForHardObj(infoParameters.get(i).getType().getTypePackage(), infoParameters.get(i).getName());
                     System.out.println("INIT BEFORE "+ initBefore);
                     cons = cons + infoParameters.get(i).getName() + ",";
@@ -72,6 +84,7 @@ public class ConsCodeGenerator {
 
     }
 
+    //рекурсивная функция для создания сложных объектов
     private String genForHardObj(String className, String argName) {
         System.out.println("HHH: " + className);
         try {
@@ -148,7 +161,7 @@ public class ConsCodeGenerator {
             for (int i = 0; i < constructor.getParameters().length; i++) {
                 if (constructor.getParameters()[i].getType().getSimpleName().equals(constructor.getParameters()[i].getType().getTypeName())||constructor.getParameters()[i].getType().getSimpleName().equals("String")) {
 
-                    args[i] = primitiveGenerator.getGenPrimObj(constructor.getParameters()[i].getType().getSimpleName());
+                    //args[i] = primitiveGenerator.getGenPrimObj(constructor.getParameters()[i].getType().getSimpleName());
 
 //                    str = str + constructor.getParameters()[i].getType().getSimpleName() + " " + cl.getSimpleName() + parameterNames[i] +
 //                            " = " + primitiveGenerator.getGenPrimString(constructor.getParameters()[i].getType().getSimpleName()) + "; ";
@@ -161,14 +174,14 @@ public class ConsCodeGenerator {
                 }
 
             }
-            if(checkObj(cl, constructor.getParameters(), args)){
-                for(int i=0;i<constructor.getParameters().length;i++){
-                    str = str + constructor.getParameters()[i].getType().getSimpleName() + " " + cl.getSimpleName() + parameterNames[i] +
-                            " = " + String.valueOf(args[i]) + "; ";
-                }
-            }else {
-                return "";
-            }
+//            if(checkObj(cl, constructor.getParameters(), args)){
+//                for(int i=0;i<constructor.getParameters().length;i++){
+//                    str = str + constructor.getParameters()[i].getType().getSimpleName() + " " + cl.getSimpleName() + parameterNames[i] +
+//                            " = " + String.valueOf(args[i]) + "; ";
+//                }
+//            }else {
+//                return "";
+//            }
 
         } else {
             str = str + cl.getSimpleName() + " " + name + " = new " + cl.getSimpleName() + "(); ";
@@ -192,41 +205,42 @@ public class ConsCodeGenerator {
         //return
     }
 
-    private boolean checkObj(Class cl, Parameter[] parameters, Object[] args) {
-        //проверка
-        boolean flag = false;
-        //while (!flag) {
-            try {
-                System.out.println("RRRRRR0");
-
-                Class[] cArg = new Class[parameters.length];
-                for(int i=0;i<parameters.length;i++){
-                    System.out.println("YYYY: "+parameters[i].getType().getTypeName());
-                    if(parameters[i].getType().getTypeName().substring(parameters[i].getType().getTypeName().length()-2).equals("[]")){
-                        cArg[i] = byte[].class;
-                    } else if(parameters[i].getType().getTypeName().equals("int")){
-                        cArg[i] = int.class;
-                    }
-                    else{
-                        cArg[i] = Class.forName(parameters[i].getType().getTypeName());
-                    }
-                }
-
-                checkCons(cl, cArg, args);
-                System.out.println("RRRRRR1");
-                flag = true;
-            } catch (Exception e) {
-                //e.printStackTrace();
-            }
-        //}
-        if(flag) return true;
-        else return false;
-    }
-
-    private void checkCons(Class cl, Class[] consArgs, Object ... args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        cl.getDeclaredConstructor(consArgs).newInstance(args);
-
-    }
+//    //проверка того, что созданный коснтруктор не ломается
+//    private boolean checkObj(Class cl, Parameter[] parameters, Object[] args) {
+//        //проверка
+//        boolean flag = false;
+//        //while (!flag) {
+//            try {
+//                System.out.println("RRRRRR0");
+//
+//                Class[] cArg = new Class[parameters.length];
+//                for(int i=0;i<parameters.length;i++){
+//                    System.out.println("YYYY: "+parameters[i].getType().getTypeName());
+//                    if(parameters[i].getType().getTypeName().substring(parameters[i].getType().getTypeName().length()-2).equals("[]")){
+//                        cArg[i] = byte[].class;
+//                    } else if(parameters[i].getType().getTypeName().equals("int")){
+//                        cArg[i] = int.class;
+//                    }
+//                    else{
+//                        cArg[i] = Class.forName(parameters[i].getType().getTypeName());
+//                    }
+//                }
+//
+//                checkCons(cl, cArg, args);
+//                System.out.println("RRRRRR1");
+//                flag = true;
+//            } catch (Exception e) {
+//                //e.printStackTrace();
+//            }
+//        //}
+//        if(flag) return true;
+//        else return false;
+//    }
+//
+//    private void checkCons(Class cl, Class[] consArgs, Object ... args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+//        cl.getDeclaredConstructor(consArgs).newInstance(args);
+//
+//    }
 
 
 }
