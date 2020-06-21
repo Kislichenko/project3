@@ -28,6 +28,6 @@ public class Main {
                 System.out.println(objectCreator.createSimpleObjectCons(classes.get(i)).getStrObject());
             }
         }
-        
+
     }
 }
