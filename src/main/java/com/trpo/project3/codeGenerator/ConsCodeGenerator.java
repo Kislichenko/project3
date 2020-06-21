@@ -11,8 +11,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Random;
 
+/**
+ * Класс для рекурсивной генерации и заполнения конструкторов
+ * для пользовательских типов сразу через InfoClass, для
+ * остальных требуется начальное приведение к InfoClass.
+ */
 public class ConsCodeGenerator {
 
     PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();

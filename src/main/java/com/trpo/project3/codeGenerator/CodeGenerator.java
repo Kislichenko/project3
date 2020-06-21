@@ -107,7 +107,7 @@ public class CodeGenerator {
     private String genImport(String importPackageName) {
         return IMPORT + importPackageName + END_LINE;
     }
-    
+
     /**
      * Генерация всех импортов необходимых для работы.
      *
