@@ -3,108 +3,157 @@ package com.trpo.project3.codeGenerator;
 
 import com.google.googlejavaformat.java.FormatterException;
 import com.trpo.project3.dto.InfoClass;
-import com.trpo.project3.dto.InfoField;
 import com.trpo.project3.dto.InfoMethod;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static jdk.nashorn.internal.ir.LiteralNode.newInstance;
+import static com.trpo.project3.codeGenerator.CodeGenConstants.*;
 
+/**
+ * Класс генерации кода тестов по собранной информации.
+ */
 public class CodeGenerator {
-    private final String endOfLine = "; ";
-    private final String openBracket = "{";
-    private final String endBracket = "}";
-    private final String testAnnotation = "@Test ";
-    private final String headers = "import org.junit.jupiter.api.Test; \nimport static org.junit.jupiter.api.Assertions.*;\n";
 
+    /**
+     * Сгенерированные тесты для каждого тестируемого класса.
+     */
     private Map<String, String> classTests = new HashMap<>();
-    Set<String> neededPackages = new HashSet<>();
-    ConsCodeGenerator consCodeGenerator = new ConsCodeGenerator();
-    MethodCodeGenerator methodCodeGenerator = new MethodCodeGenerator();
 
-    public void genTests(ArrayList<InfoClass> infoClasses) {
-        for (int i = 0; i < infoClasses.size(); i++) {
-            classTests.put(infoClasses.get(i).getName(), genTest(infoClasses.get(i)));
-        }
-    }
+    /**
+     * Сет неповторяющихся импортов необходимых пакетов для подключения.
+     */
+    private Set<String> neededPackages = new HashSet<>();
 
 
-
+    /**
+     * Генерация набора тестов для одного тестируемого класса.
+     *
+     * @param infoClass - объект, содержащий всю необходимую инф-цию о тестируемом классе.
+     * @return исходный код сгенерированных тестов для одного класса.
+     */
     public String genTest(InfoClass infoClass) {
+        String test = genPackage(infoClass.getClassPackage())
+                + getAllHeaders()
+                + genClassA(infoClass.getName())
+                + genBeforeConstructors(infoClass)
+                + genMethodTests(infoClass.getMethods())
+                + CLOSE_BLOCK;
 
-
-        String test = "";
-        test = test + "package " + infoClass.getClassPackage() + endOfLine;
-        test = test + getAllHeaders();
-        test = test + "class " + infoClass.getName() + "Test" + openBracket;
-        test = test + consCodeGenerator.genInitCons(infoClass);
-        //test = test + methodCodeGenerator.genMthods(infoClass);
-        test = test + genMethodTests(infoClass.getMethods());
-        test = test + endBracket ;
-
-        String formattedSource ="";
-        //System.out.println(test);
         try {
-            formattedSource += new com.google.googlejavaformat.java.Formatter().formatSource(test);
+            return new com.google.googlejavaformat.java.Formatter().formatSource(test);
         } catch (FormatterException e) {
             e.printStackTrace();
         }
 
-        return formattedSource;
+        return "";
     }
 
-    public String genMethodTests(ArrayList<InfoMethod> infoMethods) {
-        String methodTests="";
-        for(int i=0;i<infoMethods.size();i++){
-            methodTests = methodTests + genMethodTest(infoMethods.get(i));
+    /**
+     * Генерация кода для начальной инициализации используемых классов.
+     *
+     * @param infoClass - объект, содержащий всю необходимую инф-цию о тестируемом классе.
+     * @return - код инициализации используемых классов.
+     */
+    private String genBeforeConstructors(InfoClass infoClass) {
+        return (new ConsCodeGenerator()).genInitCons(infoClass);
+    }
+
+    /**
+     * Генерация строки, означающей принадлежность класса тестов к определнному пакету.
+     *
+     * @param packageName - имя пакета тестируемого класса.
+     * @return строку пакета.
+     */
+    private String genPackage(String packageName) {
+        return PACKAGE + packageName + END_LINE;
+    }
+
+    /**
+     * Генерация названия класса тестов для определнной сущности.
+     *
+     * @param className - название тестируемого класса.
+     * @return строку класса тестов без внутреннего содержимого.
+     */
+    private String genClassA(String className) {
+        return CLASS + className + TEST + OPEN_BLOCK;
+    }
+
+    /**
+     * Генерация строки импортов
+     *
+     * @param importPackageName - название пакета, который необходимо подключить
+     *                          для обеспечения работоспособности класса тестов.
+     * @return строку импорта пакета.
+     */
+    private String genImport(String importPackageName) {
+        return IMPORT + importPackageName + END_LINE;
+    }
+
+    /**
+     * Генерация всех импортов необходимых для работы.
+     *
+     * @return строка всех необходимых импортов.
+     */
+    private String getAllHeaders() {
+        return getTestHeaders() + neededPackages.stream().map(h -> genImport(h)).collect(Collectors.joining());
+    }
+
+    /**
+     * Генерация тестов для всех тестируемых классов.
+     *
+     * @param infoClasses - массив объектов, содержащих всю необходимую информацию
+     *                    тестируемых классах
+     */
+    public void genTests(ArrayList<InfoClass> infoClasses) {
+        for (InfoClass infoClass : infoClasses) {
+            classTests.put(infoClass.getName(), genTest(infoClass));
         }
-
-        return methodTests;
     }
 
-    private String getAllHeaders(){
-        String hd = headers;
-        for (Iterator<String> it = neededPackages.iterator(); it.hasNext(); ) {
-            String h = it.next();
-            hd=hd+" import "+h+endOfLine;
-        }
-        return hd;
+    /**
+     * Генерация тестов для массива методов.
+     *
+     * @param infoMethods - массив объектов, содержащих необходимую информацию о тестируемых методах.
+     * @return - исходный код тестов для тестирования массива методов.
+     */
+    private String genMethodTests(ArrayList<InfoMethod> infoMethods) {
+        return infoMethods.stream().map(m -> genMethodTest(m)).collect(Collectors.joining());
     }
 
-    private String getInfoMethodTypeName(InfoMethod method){
-        if(!method.getReturnType().getTypePackage().equals(method.getReturnType().getName())){
-            neededPackages.add(method.getReturnType().getTypePackage());
-        }
-        return method.getReturnType().getName();
+    /**
+     * Получение необходимых заголовков для Junit тестов, которые находятся в файле ресурсов.
+     *
+     * @return - строка импортов заголовков для Junit тестов.
+     */
+    private String getTestHeaders() {
+        return (new Utils()).readFile(TEST_HEADERS_FILE);
     }
 
-    private String getInfoFieldTypeName(InfoField field){
-        if(!field.getType().getTypePackage().equals(field.getType().getName())){
-            neededPackages.add(field.getType().getTypePackage());
-        }
-        return field.getType().getName();
+    /**
+     * Генерация кода теста для метода.
+     *
+     * @param infoMethod - объект, содержащий всю инф-цию о тестируемом методе.
+     * @return - исходный код теста тестирумого метода.
+     */
+    private String genMethodTest(InfoMethod infoMethod) {
+        return TEST_ANNOTATION
+                + PUBLIC_VOID_TEST
+                + infoMethod.getName()
+                + EMPTY_BRACKETS
+                + OPEN_BLOCK
+                + (new MethodCodeGenerator()).genMthods(infoMethod)
+                + CLOSE_BLOCK;
     }
 
-    public String genMethodTest(InfoMethod infoMethod) {
-        String method = "";
-        method = method + testAnnotation;
-        method = method + "public void " + infoMethod.getName() + "()" + openBracket;
-        method = method  + methodCodeGenerator.genMthods(infoMethod);
-
-
-        method = method + endBracket;
-
-        return method;
-    }
-
-
+    /**
+     * Печать тестов для определенного класса.
+     *
+     * @param className - класс, для которого нужно вывести тест.
+     */
     public void printTestByNameClass(String className) {
         System.out.println("Test for class '" + className + "'!!!");
         System.out.println(classTests.get(className));
         System.out.println();
     }
-
-
 }
