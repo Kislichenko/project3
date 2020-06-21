@@ -21,11 +21,6 @@ public class CodeGenerator {
     private Map<String, String> classTests = new HashMap<>();
 
     /**
-     * Сет неповторяющихся импортов необходимых пакетов для подключения.
-     */
-    private Set<String> usedImports = new HashSet<>();
-
-    /**
      * Генерация тестов для всех тестируемых классов.
      *
      * @param infoClasses - массив объектов, содержащих всю необходимую информацию
@@ -55,8 +50,9 @@ public class CodeGenerator {
      * @return исходный код сгенерированных тестов для одного класса.
      */
     private String genTest(InfoClass infoClass) {
+
         String test = genPackage(infoClass.getClassPackage())
-                + getAllHeaders()
+                + getAllHeaders(infoClass)
                 + genClassA(infoClass.getName())
                 + genBeforeConstructors(infoClass)
                 + genMethodTests(infoClass.getMethods())
@@ -111,22 +107,19 @@ public class CodeGenerator {
     private String genImport(String importPackageName) {
         return IMPORT + importPackageName + END_LINE;
     }
-
-    /**
-     * Добавление нового пакета, который нужно испортировать в классе тестов.
-     * @param importPackageName - имя пакета, который нужно импортировать.
-     */
-    private void addUsedImport(String importPackageName){
-        usedImports.add(importPackageName);
-    }
-
+    
     /**
      * Генерация всех импортов необходимых для работы.
      *
      * @return строка всех необходимых импортов.
      */
-    private String getAllHeaders() {
-        return getTestHeaders() + usedImports.stream().map(this::genImport).collect(Collectors.joining());
+    private String getAllHeaders(InfoClass infoClass) {
+        return getTestHeaders()
+                + (new ClassImports())
+                .getLinkImports(infoClass)
+                .stream()
+                .map(this::genImport)
+                .collect(Collectors.joining());
     }
 
     /**
