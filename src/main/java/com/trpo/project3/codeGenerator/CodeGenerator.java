@@ -23,8 +23,30 @@ public class CodeGenerator {
     /**
      * Сет неповторяющихся импортов необходимых пакетов для подключения.
      */
-    private Set<String> neededPackages = new HashSet<>();
+    private Set<String> usedImports = new HashSet<>();
 
+    /**
+     * Генерация тестов для всех тестируемых классов.
+     *
+     * @param infoClasses - массив объектов, содержащих всю необходимую информацию
+     *                    тестируемых классах
+     */
+    public void genTests(ArrayList<InfoClass> infoClasses) {
+        for (InfoClass infoClass : infoClasses) {
+            classTests.put(infoClass.getName(), genTest(infoClass));
+        }
+    }
+
+    /**
+     * Печать тестов для определенного класса.
+     *
+     * @param className - класс, для которого нужно вывести тест.
+     */
+    public void printTestByNameClass(String className) {
+        System.out.println("Test for class '" + className + "'!!!");
+        System.out.println(classTests.get(className));
+        System.out.println();
+    }
 
     /**
      * Генерация набора тестов для одного тестируемого класса.
@@ -32,7 +54,7 @@ public class CodeGenerator {
      * @param infoClass - объект, содержащий всю необходимую инф-цию о тестируемом классе.
      * @return исходный код сгенерированных тестов для одного класса.
      */
-    public String genTest(InfoClass infoClass) {
+    private String genTest(InfoClass infoClass) {
         String test = genPackage(infoClass.getClassPackage())
                 + getAllHeaders()
                 + genClassA(infoClass.getName())
@@ -91,24 +113,20 @@ public class CodeGenerator {
     }
 
     /**
+     * Добавление нового пакета, который нужно испортировать в классе тестов.
+     * @param importPackageName - имя пакета, который нужно импортировать.
+     */
+    private void addUsedImport(String importPackageName){
+        usedImports.add(importPackageName);
+    }
+
+    /**
      * Генерация всех импортов необходимых для работы.
      *
      * @return строка всех необходимых импортов.
      */
     private String getAllHeaders() {
-        return getTestHeaders() + neededPackages.stream().map(h -> genImport(h)).collect(Collectors.joining());
-    }
-
-    /**
-     * Генерация тестов для всех тестируемых классов.
-     *
-     * @param infoClasses - массив объектов, содержащих всю необходимую информацию
-     *                    тестируемых классах
-     */
-    public void genTests(ArrayList<InfoClass> infoClasses) {
-        for (InfoClass infoClass : infoClasses) {
-            classTests.put(infoClass.getName(), genTest(infoClass));
-        }
+        return getTestHeaders() + usedImports.stream().map(this::genImport).collect(Collectors.joining());
     }
 
     /**
@@ -118,7 +136,7 @@ public class CodeGenerator {
      * @return - исходный код тестов для тестирования массива методов.
      */
     private String genMethodTests(ArrayList<InfoMethod> infoMethods) {
-        return infoMethods.stream().map(m -> genMethodTest(m)).collect(Collectors.joining());
+        return infoMethods.stream().map(this::genMethodTest).collect(Collectors.joining());
     }
 
     /**
@@ -144,16 +162,5 @@ public class CodeGenerator {
                 + OPEN_BLOCK
                 + (new MethodCodeGenerator()).genMthods(infoMethod)
                 + CLOSE_BLOCK;
-    }
-
-    /**
-     * Печать тестов для определенного класса.
-     *
-     * @param className - класс, для которого нужно вывести тест.
-     */
-    public void printTestByNameClass(String className) {
-        System.out.println("Test for class '" + className + "'!!!");
-        System.out.println(classTests.get(className));
-        System.out.println();
     }
 }
