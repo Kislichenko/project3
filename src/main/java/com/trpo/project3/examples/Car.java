@@ -14,6 +14,7 @@ public class Car {
     private int cost;
     private int counter=0;
     private int[] abr;
+    private Test2 test2;
 
     public void setModelAndCost(Cat cat, int cost1){
         this.cat = cat;
@@ -22,6 +23,10 @@ public class Car {
 
     public void setCounter(int num){
         counter=++num;
+    }
+
+    public void setTest2(Test2 test2){
+        this.test2 = test2;
     }
 
 

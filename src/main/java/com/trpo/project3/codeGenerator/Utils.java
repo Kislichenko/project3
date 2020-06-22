@@ -2,15 +2,20 @@ package com.trpo.project3.codeGenerator;
 
 import com.google.common.collect.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 public class Utils {
 
@@ -56,6 +61,44 @@ public class Utils {
         cons+=")";
 
         return cons;
+    }
+
+    //метод для нахождения классов, который имплементируют интерфейс или абстрактный класс
+    public boolean findClassesInJar(final Class<?> baseInterface, final String jarName) throws IOException {
+        final List<String> classesTobeReturned = new ArrayList<String>();
+        if (!StringUtils.isBlank(jarName)) {
+            //jarName is relative location of jar wrt.
+            final String jarFullPath = File.separator + jarName;
+            final ClassLoader classLoader = this.getClass().getClassLoader();
+            JarInputStream jarFile = null;
+            URLClassLoader ucl = null;
+            final URL url = new URL("jar:file:" + jarFullPath + "!/");
+            ucl = new URLClassLoader(new URL[]{url}, classLoader);
+            jarFile = new JarInputStream(new FileInputStream(jarFullPath));
+            JarEntry jarEntry;
+            while (true) {
+                jarEntry = jarFile.getNextJarEntry();
+                if (jarEntry == null)
+                    break;
+                if (jarEntry.getName().endsWith(".class")) {
+                    String classname = jarEntry.getName().replaceAll("/", "\\.");
+                    classname = classname.substring(0, classname.length() - 6);
+                    if (!classname.contains("$")) {
+                        try {
+                            final Class<?> myLoadedClass = Class.forName(classname, true, ucl);
+                            if (baseInterface.isAssignableFrom(myLoadedClass)) {
+                                System.out.println(myLoadedClass.getSimpleName());
+                                return true;
+                            }
+                        } catch (final ClassNotFoundException e) {
+
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
     }
 
 }

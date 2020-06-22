@@ -3,13 +3,19 @@ package com.trpo.project3.codeGenerator;
 import com.trpo.project3.analyze.ClassInformer;
 import com.trpo.project3.analyze.ClassScanner;
 import com.trpo.project3.dto.*;
+import com.trpo.project3.examples.Test8;
 import com.trpo.project3.generator.PrimitiveGenerator;
+import org.jsoup.parser.HtmlTreeBuilder;
+import org.jsoup.parser.Parser;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodParameterScanner;
+import org.reflections.scanners.SubTypesScanner;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
+import java.util.*;
 
 /**
  * Попыткки создать корректный конструтор будут предприниматься, начиная с конструктора
@@ -164,24 +170,10 @@ public class ObjectCreator {
         return new GenArgs(strings, objects);
     }
 
+
     private void findImplForInterface(){
-        ClassScanner classScanner = new ClassScanner();
-        classScanner.scanPath();
-        List<Class> classes = classScanner.getScannedClasses();
-        Class cl = null;
-        for(int i=0;i<classes.size();i++){
-            if(classes.get(i).getSimpleName().contains("Test8")){
-                cl = classes.get(i);
 
-            }
-        }
-        for(int i=0;i<classes.size();i++){
-            if(cl.isAssignableFrom(classes.get(i))){
-                System.out.println(classes.get(i).getName());
-
-                System.out.println("WWWWWWW88888888");
-            }
-        }
+        //собираем список классов, которые исплементируют нужный нам интерфейс
     }
 
     //проверка того, что созданный коснтруктор не ломается
