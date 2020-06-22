@@ -84,8 +84,10 @@ public class Utils {
                         try {
                             final Class<?> myLoadedClass = Class.forName(classname, true, ucl);
                             if (baseInterface.isAssignableFrom(myLoadedClass)) {
-                                System.out.println(myLoadedClass.getSimpleName());
-                                return true;
+                                System.out.println("Int: "+ baseInterface.getSimpleName());
+                                System.out.println("Class: "+myLoadedClass.getSimpleName());
+                                System.out.println();
+                                //return true;
                             }
                         } catch (final ClassNotFoundException e) {
 
