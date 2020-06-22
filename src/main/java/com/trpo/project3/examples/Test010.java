@@ -5,6 +5,6 @@ import lombok.AllArgsConstructor;
 import java.nio.file.Path;
 
 @AllArgsConstructor
-public class Test10 {
+public class Test010 {
     //Path path;
 }

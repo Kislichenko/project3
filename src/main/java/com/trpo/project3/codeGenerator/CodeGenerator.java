@@ -6,6 +6,7 @@ import com.trpo.project3.dto.GenArgs;
 import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.dto.InfoMethod;
 import com.trpo.project3.dto.StringObject;
+import lombok.Getter;
 
 import javax.rmi.CORBA.Util;
 import java.util.*;
@@ -21,6 +22,7 @@ public class CodeGenerator {
     /**
      * Сгенерированные тесты для каждого тестируемого класса.
      */
+    @Getter
     private Map<String, String> classTests = new HashMap<>();
 
     /**

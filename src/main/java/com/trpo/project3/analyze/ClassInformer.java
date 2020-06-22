@@ -4,6 +4,7 @@ import com.thoughtworks.paranamer.BytecodeReadingParanamer;
 import com.thoughtworks.paranamer.Paranamer;
 import com.thoughtworks.paranamer.PositionalParanamer;
 import com.trpo.project3.dto.*;
+import lombok.Getter;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ import java.util.stream.IntStream;
  */
 public class ClassInformer {
 
+    @Getter
+    ClassScanner classScanner = new ClassScanner();
+
     /**
      * Считываем все классы из classpath и получаем (сохраняем) всю необходимую информацию
      *
@@ -22,7 +26,7 @@ public class ClassInformer {
      */
     public ArrayList<InfoClass> saveAllClasses() {
         ArrayList<InfoClass> infoClasses = new ArrayList<>();
-        ClassScanner classScanner = new ClassScanner();
+
         classScanner.scanPath();
 
         classScanner.getScannedClasses().stream().forEach(cl -> infoClasses.add(saveClass(cl)));

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 public class Auto {
-    //ArrayList<Integer> nums;
+    ArrayList<Integer> nums;
     private String model;
     private int cost;
     private Integer old;
@@ -23,7 +23,7 @@ public class Auto {
         counter = ++num;
     }
 
-//    public Integer getByNumber(int num) {
-//        return nums.get(num);
-//    }
+    public Integer getByNumber(int num) {
+        return nums.get(num);
+    }
 }
