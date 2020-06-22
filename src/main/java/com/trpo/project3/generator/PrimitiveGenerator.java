@@ -31,7 +31,7 @@ public class PrimitiveGenerator {
     private StringObject genSimple(String type) {
 
         if (type.equals("int")) {
-            return new StringObject(random.nextInt(), "" + random.nextInt(),null);
+            return new StringObject(random.nextInt(100), "" + random.nextInt(100),null);
         } else if (type.equals("byte")) {
             byte[] bt = new byte[1];
             random.nextBytes(bt);
