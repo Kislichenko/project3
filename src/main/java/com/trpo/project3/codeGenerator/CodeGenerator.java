@@ -8,7 +8,6 @@ import com.trpo.project3.dto.InfoMethod;
 import com.trpo.project3.dto.StringObject;
 import lombok.Getter;
 
-import javax.rmi.CORBA.Util;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,7 @@ public class CodeGenerator {
      * Генерация тестов для всех тестируемых классов.
      *
      * @param infoClasses - массив объектов, содержащих всю необходимую информацию
-     *                    тестируемых классах
+     * тестируемых классах
      */
 
     private Set<String> headers = new HashSet<>();
@@ -37,7 +36,7 @@ public class CodeGenerator {
     public void genTests(ArrayList<InfoClass> infoClasses) {
         for (InfoClass infoClass : infoClasses) {
             String genTest = genTest(infoClass);
-            if(genTest.equals("")) continue;
+            if (genTest.equals("")) continue;
 
             classTests.put(infoClass.getName(), genTest);
         }
@@ -66,9 +65,9 @@ public class CodeGenerator {
         String test = "";
         String beforeCons = genBeforeConstructors(infoClass);
 
-        if(beforeCons.equals("")){
+        if (beforeCons.equals("")) {
             return "";
-        }else {
+        } else {
 
             test = genPackage(infoClass.getClassPackage())
                     + getAllHeaders(infoClass)
@@ -100,8 +99,8 @@ public class CodeGenerator {
 
     private String createCons(InfoClass infoClass) {
         StringObject stringObject = (new ObjectCreator()).createCons(infoClass);
-        if(stringObject.getStrObject().equals("")) return "";
-        if(stringObject.getHeaders()!=null) {
+        if (stringObject.getStrObject().equals("")) return "";
+        if (stringObject.getHeaders() != null) {
             headers.addAll(stringObject.getHeaders());
         }
         return (new Utils()).createCons(stringObject, infoClass.getName());
@@ -178,13 +177,13 @@ public class CodeGenerator {
      */
     private String genMethodTest(InfoMethod infoMethod) {
         String methodInnerTest = getMethod(infoMethod);
-        if(methodInnerTest=="") {
+        if (methodInnerTest == "") {
             return "";
-        }else {
+        } else {
             return TEST_ANNOTATION
                     + PUBLIC_VOID_TEST
                     + infoMethod.getName()
-                    +"Test"
+                    + "Test"
                     + EMPTY_BRACKETS
                     + "throws IOException"
                     + OPEN_BLOCK
@@ -193,11 +192,11 @@ public class CodeGenerator {
         }
     }
 
-    private String getMethod(InfoMethod infoMethod){
+    private String getMethod(InfoMethod infoMethod) {
         GenArgs args = (new ObjectCreator()).createObjectMethods(infoMethod);
-        if(args==null) return "";
+        if (args == null) return "";
 
-        if(args.getHeaders()!=null){
+        if (args.getHeaders() != null) {
             headers.addAll(args.getHeaders());
         }
         //формирование строки вызова метода с параметрами или без

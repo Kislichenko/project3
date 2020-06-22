@@ -23,7 +23,7 @@ public class ObjectCreator {
     private Utils utils;
     private List<String> primitives;
 
-    public ObjectCreator(){
+    public ObjectCreator() {
         utils = new Utils();
         primitives = Arrays.asList("int", "float", "byte", "long", "double",
                 "char", "short", "boolean", "String", "int[]", "float[]", "byte[]", "long[]", "double[]",
@@ -59,10 +59,10 @@ public class ObjectCreator {
      * @return строка исходного кода для вызова метода с рекурсивным заполнением параметров
      */
     public GenArgs createObjectMethods(InfoMethod infoMethod) {
-        if(infoMethod.getModifiers().contains("public")) {
+        if (infoMethod.getModifiers().contains("public")) {
             //рекурсивно генерируем аргументы метода
             return genArgs(infoMethod.getParameters());
-        }else{
+        } else {
             return null;
         }
     }
@@ -149,8 +149,8 @@ public class ObjectCreator {
             StringObject stringObject = null;
 
             //проверим, является ли параметр дженериком
-            if(infoParameters.get(i).getGenericType().contains("<")){
-                System.out.println("TTT: "+infoParameters.get(i).getGenericType());
+            if (infoParameters.get(i).getGenericType().contains("<")) {
+                System.out.println("TTT: " + infoParameters.get(i).getGenericType());
                 stringObject = new StringObject(null, "null", null);
             }
             //проверяем, является ли параметр примитивом (задан список примтивов)
@@ -175,7 +175,7 @@ public class ObjectCreator {
                     try {
                         if (strName.get(0).contains("[]")) {
                             strName = findImplForInterface(getArrayClass(Class.forName(strName.get(0).substring(0, strName.get(0).indexOf("[]")))));
-                        }else {
+                        } else {
                             strName = findImplForInterface(Class.forName(strName.get(0)));
                         }
                     } catch (ClassNotFoundException e) {
@@ -200,17 +200,17 @@ public class ObjectCreator {
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
-                    if (stringObject.getStrObject() != null&&!strName.get(j).contains("[]")) {
+                    if (stringObject.getStrObject() != null && !strName.get(j).contains("[]")) {
                         headers.add(strName.get(j));
                         break;
                     }
                 }
             }
 
-            if(stringObject!=null) {
+            if (stringObject != null) {
                 objects[i] = stringObject.getObject();
                 strings.add(stringObject.getStrObject());
-                if(stringObject.getHeaders()!=null) {
+                if (stringObject.getHeaders() != null) {
                     headers.addAll(stringObject.getHeaders());
                 }
             }
@@ -230,7 +230,7 @@ public class ObjectCreator {
     private List<String> findImplForInterface(Class aClass) {
 
         List<String> classesTobeReturned = new ArrayList<String>();
-        if (aClass.getProtectionDomain().getCodeSource()==null || aClass.getProtectionDomain().getCodeSource().getLocation().getPath().contains("target/classes")) {
+        if (aClass.getProtectionDomain().getCodeSource() == null || aClass.getProtectionDomain().getCodeSource().getLocation().getPath().contains("target/classes")) {
             ClassScanner classScanner = new ClassScanner();
             classScanner.scanPath();
             List<Class> classes = classScanner.getScannedClasses();

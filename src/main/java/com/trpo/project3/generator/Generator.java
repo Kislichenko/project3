@@ -23,7 +23,7 @@ public class Generator {
         Map<String, String> classTests = codeGenerator.getClassTests();
         FileSaver fileSaver = new FileSaver();
 
-        for(Map.Entry<String, String> entry : classTests.entrySet()) {
+        for (Map.Entry<String, String> entry : classTests.entrySet()) {
             //System.out.println(entry.getKey());
             //codeGenerator.printTestByNameClass("Man");
             fileSaver.createFile(classInformer.getClassScanner().getClassByName(entry.getKey()), entry.getValue());

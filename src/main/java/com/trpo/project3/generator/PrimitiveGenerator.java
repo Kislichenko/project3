@@ -31,7 +31,7 @@ public class PrimitiveGenerator {
     private StringObject genSimple(String type) {
 
         if (type.equals("int")) {
-            return new StringObject(random.nextInt(100), "" + random.nextInt(100),null);
+            return new StringObject(random.nextInt(100), "" + random.nextInt(100), null);
         } else if (type.equals("byte")) {
             byte[] bt = new byte[1];
             random.nextBytes(bt);
@@ -109,7 +109,7 @@ public class PrimitiveGenerator {
             String str2 = "\"" + generateRandomString(8) + "\"";
             String[] str = new String[]{str1, str2};
             return new StringObject(str,
-                    "new String[]{"+str1+","+str2+"}", null);
+                    "new String[]{" + str1 + "," + str2 + "}", null);
         } else {
             return new StringObject(null, "null", null);
         }

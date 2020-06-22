@@ -1,7 +1,6 @@
 package com.trpo.project3.codeGenerator;
 
 import com.trpo.project3.dto.GenArgs;
-import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.dto.InfoMethod;
 import com.trpo.project3.dto.StringObject;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +49,7 @@ public class Utils {
     }
 
 
-    public String genInvokeMethod(InfoMethod infoMethod, GenArgs args){
+    public String genInvokeMethod(InfoMethod infoMethod, GenArgs args) {
         //формирование строки кода с заполнением аргументов
         String arguments = "";
         if (args.getGenArgs().size() > 0) {
@@ -60,7 +59,7 @@ public class Utils {
             arguments = arguments.substring(0, arguments.length() - 1);
         }
 
-       return  "" + firstLetterToLowCase(infoMethod.getNameClass())
+        return "" + firstLetterToLowCase(infoMethod.getNameClass())
                 + "." + infoMethod.getName()
                 + "(" + arguments
                 + "); ";
@@ -68,6 +67,7 @@ public class Utils {
 
     /**
      * Генерация строки кода инициализации конструктора.
+     *
      * @param stringObject
      * @param className
      * @return
@@ -121,8 +121,8 @@ public class Utils {
                             final Class<?> myLoadedClass = Class.forName(classname, true, ucl);
                             if (baseInterface.isAssignableFrom(myLoadedClass)) {
 
-                                if(!Modifier.toString(myLoadedClass.getModifiers()).contains("abstract")&&
-                                        !Modifier.toString(myLoadedClass.getModifiers()).contains("interface")){
+                                if (!Modifier.toString(myLoadedClass.getModifiers()).contains("abstract") &&
+                                        !Modifier.toString(myLoadedClass.getModifiers()).contains("interface")) {
                                     classesTobeReturned.add(myLoadedClass.getTypeName());
                                 }
 

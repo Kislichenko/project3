@@ -2,14 +2,11 @@ package com.trpo.project3;
 
 import com.trpo.project3.analyze.ClassScanner;
 import com.trpo.project3.codeGenerator.ObjectCreator;
-import com.trpo.project3.codeGenerator.Utils;
 import com.trpo.project3.examples.Test2;
 import com.trpo.project3.examples.Test8Impl;
 import com.trpo.project3.examples.Test9;
 import com.trpo.project3.generator.Generator;
-import org.jsoup.parser.Parser;
 
-import java.io.IOException;
 import java.util.List;
 
 public class Main {
@@ -24,7 +21,7 @@ public class Main {
         generator.run();
 
 
-        String str= String.valueOf(1);
+        String str = String.valueOf(1);
         ClassScanner classScanner = new ClassScanner();
         ObjectCreator objectCreator = new ObjectCreator();
         classScanner.scanPath();

@@ -9,13 +9,13 @@ import org.jsoup.parser.Parser;
 @Setter
 @AllArgsConstructor
 public class Car {
+    Parser parser;
     private String model;
     private Cat cat;
     private int cost;
     private int counter = 0;
     private int[] abr;
     private Test2 test2;
-    Parser parser;
 
     public void setModelAndCost(Cat cat, int cost1) {
         this.cat = cat;
