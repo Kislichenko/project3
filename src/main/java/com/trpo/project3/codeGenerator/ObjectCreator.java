@@ -27,7 +27,7 @@ public class ObjectCreator {
         utils = new Utils();
         primitives = Arrays.asList("int", "float", "byte", "long", "double",
                 "char", "short", "boolean", "String", "int[]", "float[]", "byte[]", "long[]", "double[]",
-                "char[]", "short[]", "boolean[]", "Class");
+                "char[]", "short[]", "boolean[]", "Class", "String[]");
     }
 
 

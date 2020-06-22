@@ -105,8 +105,11 @@ public class PrimitiveGenerator {
 
         }
         if (type.equals("String[]")) {
-            return new StringObject("\"" + generateRandomString(8) + "\"",
-                    "\"" + generateRandomString(8) + "\"", null);
+            String str1 = "\"" + generateRandomString(8) + "\"";
+            String str2 = "\"" + generateRandomString(8) + "\"";
+            String[] str = new String[]{str1, str2};
+            return new StringObject(str,
+                    "new String[]{"+str1+","+str2+"}", null);
         } else {
             return new StringObject(null, "", null);
         }
