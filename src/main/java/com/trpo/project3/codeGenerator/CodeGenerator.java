@@ -34,6 +34,10 @@ public class CodeGenerator {
 
     public void genTests(ArrayList<InfoClass> infoClasses) {
         for (InfoClass infoClass : infoClasses) {
+            System.out.println("CLASS: "+infoClass.getName());
+            String genTest = genTest(infoClass);
+            if(genTest.equals("")) continue;
+
             classTests.put(infoClass.getName(), genTest(infoClass));
         }
     }
@@ -58,14 +62,19 @@ public class CodeGenerator {
      */
     private String genTest(InfoClass infoClass) {
 
-        System.out.println("AAAAAAAAAA: " + infoClass.getName());
+        String test = "";
+        String beforeCons = genBeforeConstructors(infoClass);
+        if(beforeCons.equals("")){
+            return "";
+        }else {
 
-        String test = genPackage(infoClass.getClassPackage())
-                + getAllHeaders(infoClass)
-                + genClassA(infoClass.getName())
-                + genBeforeConstructors(infoClass)
-                + genMethodTests(infoClass.getMethods())
-                + CLOSE_BLOCK;
+            test = genPackage(infoClass.getClassPackage())
+                    + getAllHeaders(infoClass)
+                    + genClassA(infoClass.getName())
+                    + beforeCons
+                    + genMethodTests(infoClass.getMethods())
+                    + CLOSE_BLOCK;
+        }
 
         //return test;
         try {
@@ -89,6 +98,7 @@ public class CodeGenerator {
 
     private String createCons(InfoClass infoClass) {
         StringObject stringObject = (new ObjectCreator()).createCons(infoClass);
+        if(stringObject.getStrObject().equals("")) return "";
         if(stringObject.getHeaders()!=null) {
             headers.addAll(stringObject.getHeaders());
         }
@@ -102,7 +112,6 @@ public class CodeGenerator {
      * @return строку пакета.
      */
     private String genPackage(String packageName) {
-        System.out.println("YES");
         return PACKAGE + packageName + END_LINE;
     }
 
@@ -166,17 +175,23 @@ public class CodeGenerator {
      * @return - исходный код теста тестирумого метода.
      */
     private String genMethodTest(InfoMethod infoMethod) {
-        return TEST_ANNOTATION
-                + PUBLIC_VOID_TEST
-                + infoMethod.getName()
-                + EMPTY_BRACKETS
-                + OPEN_BLOCK
-                + getMethod(infoMethod)
-                + CLOSE_BLOCK;
+        String methodInnerTest = getMethod(infoMethod);
+        if(methodInnerTest=="") {
+            return "";
+        }else {
+            return TEST_ANNOTATION
+                    + PUBLIC_VOID_TEST
+                    + infoMethod.getName()
+                    + EMPTY_BRACKETS
+                    + OPEN_BLOCK
+                    + methodInnerTest
+                    + CLOSE_BLOCK;
+        }
     }
 
     private String getMethod(InfoMethod infoMethod){
         GenArgs args = (new ObjectCreator()).createObjectMethods(infoMethod);
+        if(args==null) return "";
 
         if(args.getHeaders()!=null){
             headers.addAll(args.getHeaders());

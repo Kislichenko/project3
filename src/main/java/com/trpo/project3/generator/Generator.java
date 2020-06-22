@@ -19,7 +19,7 @@ public class Generator {
         CodeGenerator codeGenerator = new CodeGenerator();
         codeGenerator.genTests(infoClasses);
 
-        codeGenerator.printTestByNameClass("Car");
+        codeGenerator.printTestByNameClass("Test2");
 
 
         //FileSaver fileSaver = new FileSaver();

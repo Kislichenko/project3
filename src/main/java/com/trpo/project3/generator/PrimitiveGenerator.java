@@ -55,7 +55,7 @@ public class PrimitiveGenerator {
             return new StringObject("\"" + generateRandomString(8) + "\"",
                     "\"" + generateRandomString(8) + "\"", null);
         } else {
-            return new StringObject(null, "", null);
+            return new StringObject(null, "null", null);
         }
     }
 

@@ -20,11 +20,15 @@ import java.util.*;
  */
 public class ObjectCreator {
     private final int ATTEMPT = 3;
-    Utils utils = new Utils();
-    PrimitiveGenerator primitiveGenerator = new PrimitiveGenerator();
-    private List<String> primitives = Arrays.asList("int", "float", "byte", "long", "double",
-            "char", "short", "boolean", "String", "int[]", "float[]", "byte[]", "long[]", "double[]",
-            "char[]", "short[]", "boolean[]", "String[]");
+    private Utils utils;
+    private List<String> primitives;
+
+    public ObjectCreator(){
+        utils = new Utils();
+        primitives = Arrays.asList("int", "float", "byte", "long", "double",
+                "char", "short", "boolean", "String", "int[]", "float[]", "byte[]", "long[]", "double[]",
+                "char[]", "short[]", "boolean[]", "Class");
+    }
 
 
     /**
@@ -55,8 +59,12 @@ public class ObjectCreator {
      * @return строка исходного кода для вызова метода с рекурсивным заполнением параметров
      */
     public GenArgs createObjectMethods(InfoMethod infoMethod) {
-        //рекурсивно генерируем аргументы метода
-        return genArgs(infoMethod.getParameters());
+        if(infoMethod.getModifiers().contains("public")) {
+            //рекурсивно генерируем аргументы метода
+            return genArgs(infoMethod.getParameters());
+        }else{
+            return null;
+        }
     }
 
     /**
@@ -144,7 +152,7 @@ public class ObjectCreator {
             if (primitives.contains(infoParameters.get(i).getType().getName())) {
 
                 //генерируем примитив (объект + строка исходного кода)
-                stringObject = primitiveGenerator.getGenPrim(infoParameters.get(i).getType().getName());
+                stringObject = (new PrimitiveGenerator()).getGenPrim(infoParameters.get(i).getType().getName());
             } else { //рекурсивно генерируем сложные объекты
 
                 //получаем имя пакета
@@ -160,7 +168,11 @@ public class ObjectCreator {
 
                     //ищем имплементирующий класс и заменяем пакет
                     try {
-                        strName = findImplForInterface(Class.forName(strName.get(0)));
+                        if (strName.get(0).contains("[]")) {
+                            strName = findImplForInterface(getArrayClass(Class.forName(strName.get(0).substring(0, strName.get(0).indexOf("[]")))));
+                        }else {
+                            strName = findImplForInterface(Class.forName(strName.get(0)));
+                        }
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -182,7 +194,7 @@ public class ObjectCreator {
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
-                    if (stringObject.getStrObject() != null) {
+                    if (stringObject.getStrObject() != null&&!strName.get(j).contains("[]")) {
                         headers.add(strName.get(j));
                         break;
                     }
@@ -211,10 +223,6 @@ public class ObjectCreator {
      */
     private List<String> findImplForInterface(Class aClass) {
 
-        System.out.println(aClass.getName());
-        System.out.println(aClass.getProtectionDomain().getCodeSource());
-        //System.out.println(aClass.getProtectionDomain().getCodeSource().getLocation().getPath());
-
         List<String> classesTobeReturned = new ArrayList<String>();
         if (aClass.getProtectionDomain().getCodeSource()==null || aClass.getProtectionDomain().getCodeSource().getLocation().getPath().contains("target/classes")) {
             ClassScanner classScanner = new ClassScanner();
@@ -227,7 +235,6 @@ public class ObjectCreator {
                             !Modifier.toString(classes.get(i).getModifiers()).contains("interface")) {
 
                         classesTobeReturned.add(classes.get(i).getName());
-                        System.out.println(classes.get(i).getName());
                     }
                 }
             }
