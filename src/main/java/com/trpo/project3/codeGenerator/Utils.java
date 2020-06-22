@@ -1,6 +1,5 @@
 package com.trpo.project3.codeGenerator;
 
-import com.google.common.collect.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,9 +10,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -41,24 +38,24 @@ public class Utils {
         return "";
     }
 
-    public String firstLetterToLowCase(String str){
+    public String firstLetterToLowCase(String str) {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
     //генерация кода инициализации через конструктор
-    public String createConsA(String className, List<String> params){
+    public String createConsA(String className, List<String> params) {
 
         String cons = " new "
                 + className + "(";
 
-        if(params.size()>0) {
+        if (params.size() > 0) {
             for (int i = 0; i < params.size(); i++) {
                 cons += params.get(i) + ",";
             }
-            cons = cons.substring(0, cons.length()-1);
+            cons = cons.substring(0, cons.length() - 1);
         }
 
-        cons+=")";
+        cons += ")";
 
         return cons;
     }

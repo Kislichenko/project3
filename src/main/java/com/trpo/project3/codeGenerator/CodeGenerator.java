@@ -5,7 +5,9 @@ import com.google.googlejavaformat.java.FormatterException;
 import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.dto.InfoMethod;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.trpo.project3.codeGenerator.CodeGenConstants.*;
@@ -52,7 +54,7 @@ public class CodeGenerator {
      */
     private String genTest(InfoClass infoClass) {
 
-        System.out.println("AAAAAAAAAA: "+infoClass.getName());
+        System.out.println("AAAAAAAAAA: " + infoClass.getName());
 
         String test = genPackage(infoClass.getClassPackage())
                 + getAllHeaders(infoClass)

@@ -5,16 +5,16 @@ public class Test2 {
     int[] b;
     String[] c;
 
-    public Test2(String a){
+    public Test2(String a) {
         this.a = a;
     }
 
-    public Test2(String a, int[] b){
+    public Test2(String a, int[] b) {
         this.a = a;
         this.b = b;
     }
 
-    public Test2(int[] b, String[] c){
+    public Test2(int[] b, String[] c) {
         this.b = b;
         this.c = c;
     }

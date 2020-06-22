@@ -1,21 +1,14 @@
 package com.trpo.project3.codeGenerator;
 
 import com.trpo.project3.analyze.ClassInformer;
-import com.trpo.project3.analyze.ClassScanner;
 import com.trpo.project3.dto.*;
-import com.trpo.project3.examples.Test8;
 import com.trpo.project3.generator.PrimitiveGenerator;
-import org.jsoup.parser.HtmlTreeBuilder;
-import org.jsoup.parser.Parser;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodParameterScanner;
-import org.reflections.scanners.SubTypesScanner;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Попыткки создать корректный конструтор будут предприниматься, начиная с конструктора
@@ -34,17 +27,17 @@ public class ObjectCreator {
 
     public String createCons(InfoClass infoClass) {
         StringObject stringObject = createObjectCons(infoClass);
-        return ""+infoClass.getName() +" "
-                +utils.firstLetterToLowCase(infoClass.getName())
-                +" = " + stringObject.getStrObject()+";";
+        return "" + infoClass.getName() + " "
+                + utils.firstLetterToLowCase(infoClass.getName())
+                + " = " + stringObject.getStrObject() + ";";
     }
 
-    public StringObject createObjectConsByClass(Class cl){
+    public StringObject createObjectConsByClass(Class cl) {
         InfoClass infoClass = (new ClassInformer()).genFromClass(cl);
         return createObjectCons(infoClass);
     }
 
-    public String createObjectMethods(InfoMethod infoMethod){
+    public String createObjectMethods(InfoMethod infoMethod) {
         GenArgs args = genArgs(infoMethod.getParameters());
         System.out.println("TTT000");
         System.out.println(args.getGenArgs());
@@ -52,17 +45,17 @@ public class ObjectCreator {
         System.out.println(infoMethod.getName());
         String arguments = "";
 
-        if(args.getGenArgs().size()>0) {
+        if (args.getGenArgs().size() > 0) {
             for (int i = 0; i < args.getGenArgs().size(); i++) {
                 arguments += args.getGenArgs().get(i) + ",";
             }
-            arguments = arguments.substring(0, arguments.length()-1);
+            arguments = arguments.substring(0, arguments.length() - 1);
         }
 
-        return ""+utils.firstLetterToLowCase(infoMethod.getNameClass())
-                +"."+infoMethod.getName()
-                +"("+arguments
-                +"); ";
+        return "" + utils.firstLetterToLowCase(infoMethod.getNameClass())
+                + "." + infoMethod.getName()
+                + "(" + arguments
+                + "); ";
     }
 
     // метод для создание объекта с простыми параметрами через конструктор
@@ -89,7 +82,7 @@ public class ObjectCreator {
                     for (int i = 0; i < ATTEMPT; i++) {
                         //пытаемся сгенерировать корректные параметры для конструтора
                         args = genArgs(infoConstructor.getParameters());
-                        System.out.println("TTTTTT0: "+infoConstructor.getModifiers());
+                        System.out.println("TTTTTT0: " + infoConstructor.getModifiers());
                         System.out.println("TTTTTTT: " + args.getObjects());
                         System.out.println("TTTTTTT2: " + args.getGenArgs());
 
@@ -141,7 +134,7 @@ public class ObjectCreator {
                 //рекурсивно генерируем сложные объекты
                 System.out.println("HARD0: " + infoParameters.get(i).getType().getName());
                 System.out.println("HARD: " + infoParameters.get(i).getType().getTypePackage());
-                if(infoParameters.get(i).getModifiers().contains("interface")){
+                if (infoParameters.get(i).getModifiers().contains("interface")) {
                     System.out.println("EEEEEEEE");
                     findImplForInterface();
                 }
@@ -149,9 +142,9 @@ public class ObjectCreator {
                 try {
                     String strName = infoParameters.get(i).getType().getTypePackage();
 
-                    if(strName.contains("[]")){
-                        stringObject = createObjectConsByClass(getArrayClass(Class.forName(strName.substring(0,strName.indexOf("[]")))));
-                    }else {
+                    if (strName.contains("[]")) {
+                        stringObject = createObjectConsByClass(getArrayClass(Class.forName(strName.substring(0, strName.indexOf("[]")))));
+                    } else {
                         stringObject = createObjectConsByClass(Class.forName(infoParameters.get(i).getType().getTypePackage()));
                     }
 
@@ -171,7 +164,7 @@ public class ObjectCreator {
     }
 
 
-    private void findImplForInterface(){
+    private void findImplForInterface() {
 
         //собираем список классов, которые исплементируют нужный нам интерфейс
     }
@@ -183,7 +176,7 @@ public class ObjectCreator {
             Class[] cArg = new Class[infoParameters.size()];
 
             for (int i = 0; i < infoParameters.size(); i++) {
-                System.out.println("CHECK: " + infoParameters.get(i).getType().getTypePackage() + " ;; "+infoParameters.get(i).getName() + " ;;; "+cl.getSimpleName());
+                System.out.println("CHECK: " + infoParameters.get(i).getType().getTypePackage() + " ;; " + infoParameters.get(i).getName() + " ;;; " + cl.getSimpleName());
                 cArg[i] = getClass(infoParameters.get(i).getType().getTypePackage());
             }
             System.out.println();
@@ -229,7 +222,7 @@ public class ObjectCreator {
         Arrays.stream(args).forEach(arg -> System.out.println("DD: " + arg));
 
         //плохая защита от переаолнения массивов
-        if(cl.getSimpleName().contains("List")){
+        if (cl.getSimpleName().contains("List")) {
             return null;
         }
 

@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class ClassImports {
 
-    public Set<String> getLinkImports(InfoClass infoClass){
+    public Set<String> getLinkImports(InfoClass infoClass) {
         return new HashSet<>();
     }
 }

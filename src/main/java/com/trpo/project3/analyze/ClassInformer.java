@@ -32,10 +32,11 @@ public class ClassInformer {
 
     /**
      * Получение всей необходимой информации из любого (в том числе не пользовательского)
+     *
      * @param cl - анализируемый класс
      * @return - InfoClass
      */
-    public InfoClass genFromClass(Class cl){
+    public InfoClass genFromClass(Class cl) {
         return saveClass(cl);
     }
 
@@ -52,9 +53,9 @@ public class ClassInformer {
         infoClass.setName(cl.getSimpleName());
 
         //сохранение пакета класса
-        if(cl.getTypeName().contains("[]")){
-            infoClass.setClassPackage(cl.getTypeName().substring(0,cl.getTypeName().indexOf("[]")));
-        }else {
+        if (cl.getTypeName().contains("[]")) {
+            infoClass.setClassPackage(cl.getTypeName().substring(0, cl.getTypeName().indexOf("[]")));
+        } else {
             infoClass.setClassPackage(cl.getPackage().getName());
         }
 
@@ -154,7 +155,7 @@ public class ClassInformer {
 //                .lookupParameterNames(obj, false);
 
         String[] parameterNames = (new PositionalParanamer())
-                 .lookupParameterNames(obj, false);
+                .lookupParameterNames(obj, false);
 
         IntStream.range(0, parameters.length).forEach(i -> {
             infoParameters.add(InfoParameter

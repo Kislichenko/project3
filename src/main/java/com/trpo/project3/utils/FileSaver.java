@@ -27,7 +27,7 @@ public class FileSaver {
         }
     }
 
-    public  void printFile(String srcCode) {
+    public void printFile(String srcCode) {
         System.out.println(srcCode);
     }
 

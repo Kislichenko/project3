@@ -18,7 +18,7 @@ public class ClassScanner {
     private List<Class> scannedClasses;
     private String classpath;
 
-    public ClassScanner(){
+    public ClassScanner() {
         classpath = "target/classes";
         scannedClasses = new LinkedList<>();
     }
@@ -27,26 +27,26 @@ public class ClassScanner {
         try (Stream<Path> walk = Files.walk(Paths.get(classpath))) {
             walk.sorted(Comparator.reverseOrder())
                     .filter(file -> file.toString().endsWith(".class"))
-                    .map(filepath -> filepath.toString().replace(classpath,""))
-                    .map(s -> s.replace(".class",""))
+                    .map(filepath -> filepath.toString().replace(classpath, ""))
+                    .map(s -> s.replace(".class", ""))
                     .forEachOrdered(className -> {
                         try {
                             String classNameString = className.replace("/", ".").substring(1, className.length());
                             scannedClasses.add(Class.forName(classNameString));
                         } catch (ClassNotFoundException e) {
-                            Logger.getLogger("ClassScanner").log(Level.WARNING,"Fail to adding classes: " + e.toString());
+                            Logger.getLogger("ClassScanner").log(Level.WARNING, "Fail to adding classes: " + e.toString());
                         }
                     });
         } catch (IOException e) {
-            Logger.getLogger("ClassScanner").log(Level.WARNING,"Fail to scanning path: " + e.toString());
+            Logger.getLogger("ClassScanner").log(Level.WARNING, "Fail to scanning path: " + e.toString());
         }
     }
 
-    public Class getClassByName(String name){
+    public Class getClassByName(String name) {
         scanPath();
 
         for (Class cl : scannedClasses) {
-            if(cl.getName().contains(name)){
+            if (cl.getName().contains(name)) {
                 return cl;
             }
         }
