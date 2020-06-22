@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -96,7 +97,7 @@ public class Utils {
     }
 
     //метод для нахождения классов, который имплементируют интерфейс или абстрактный класс
-    public boolean findClassesInJar(final Class<?> baseInterface, final String jarName) throws IOException {
+    public List<String> findClassesInJar(final Class<?> baseInterface, final String jarName) throws IOException {
         final List<String> classesTobeReturned = new ArrayList<String>();
         if (!StringUtils.isBlank(jarName)) {
             //jarName is relative location of jar wrt.
@@ -119,9 +120,12 @@ public class Utils {
                         try {
                             final Class<?> myLoadedClass = Class.forName(classname, true, ucl);
                             if (baseInterface.isAssignableFrom(myLoadedClass)) {
-                                System.out.println("Int: "+ baseInterface.getSimpleName());
-                                System.out.println("Class: "+myLoadedClass.getSimpleName());
-                                System.out.println();
+
+                                if(!Modifier.toString(myLoadedClass.getModifiers()).contains("abstract")&&
+                                        !Modifier.toString(myLoadedClass.getModifiers()).contains("interface")){
+                                    classesTobeReturned.add(myLoadedClass.getTypeName());
+                                }
+
                                 //return true;
                             }
                         } catch (final ClassNotFoundException e) {
@@ -130,9 +134,9 @@ public class Utils {
                     }
                 }
             }
-            return false;
+            return classesTobeReturned;
         }
-        return false;
+        return null;
     }
 
 }

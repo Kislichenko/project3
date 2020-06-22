@@ -20,22 +20,6 @@ public class Main {
         Test9 test9 = new Test9(new Test8Impl("hello", new Test2("ttt", new int[]{1, 2})), "ff");
         test9.getHello();
 
-        Class aClass = Parser.class.getConstructors()[0].getParameters()[0].getType();
-        System.out.println(aClass.getProtectionDomain().getCodeSource().getLocation().getPath());
-
-        Utils utils = new Utils();
-
-        Generator generator = new Generator();
-        try {
-            System.out.println(
-                    utils.findClassesInJar(aClass,
-                            aClass.getProtectionDomain()
-                                    .getCodeSource()
-                                    .getLocation()
-                                    .getPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 //        generator.run();
 
 
@@ -45,7 +29,7 @@ public class Main {
         classScanner.scanPath();
         List<Class> classes = classScanner.getScannedClasses();
         for (int i = 0; i < classes.size(); i++) {
-            if (classes.get(i).getSimpleName().contains("Test11")) {
+            if (classes.get(i).getSimpleName().contains("Test9")) {
                 System.out.println(objectCreator.createObjectConsByClass(classes.get(i)).getStrObject());
             }
         }

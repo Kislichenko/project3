@@ -1,11 +1,14 @@
 package com.trpo.project3.codeGenerator;
 
 import com.trpo.project3.analyze.ClassInformer;
+import com.trpo.project3.analyze.ClassScanner;
 import com.trpo.project3.dto.*;
 import com.trpo.project3.generator.PrimitiveGenerator;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +30,7 @@ public class ObjectCreator {
 
     /**
      * Генерация строки кода инициализации конструктора.
+     *
      * @param infoClass - объект, содержащий всю необходимую инф-цию классе.
      * @return - строка кода инициализации конструктора.
      */
@@ -36,6 +40,7 @@ public class ObjectCreator {
 
     /**
      * Генерация объектов и строки исходного кода инциализации конструктора.
+     *
      * @param cl - класс, для которого производится генерация.
      * @return - сгенерированные объекты и строка кода инициализации.
      */
@@ -45,6 +50,7 @@ public class ObjectCreator {
 
     /**
      * Генерация строки исходного кода для вызова метода с рекурсивным заполнением параметров.
+     *
      * @param infoMethod - объект, содержащий всю необходимую инф-цию о методе, для которого
      *                   производится генерация кода.
      * @return строка исходного кода для вызова метода с рекурсивным заполнением параметров
@@ -59,6 +65,7 @@ public class ObjectCreator {
 
     /**
      * Метод для создания объекта с параметрами через конструктор.
+     *
      * @param infoClass - объект, содержащий всю необходимую инф-цию классе.
      * @return объект и строка инициализации конструктора.
      */
@@ -118,6 +125,7 @@ public class ObjectCreator {
      * Метод рекурсивной генерации и заполнения аргументов конструктора/метода.
      * Рекурсия идет до тех пор, пока не появится объект или без параметров, или с примитивными параеметрами,
      * или не не получится этот объект создать.
+     *
      * @param infoParameters - набор параметров метода/конструктора.
      * @return - сгенерированные параметры и строка исходного кода, которая соотвествует сгенерированным параметрам.
      */
@@ -142,32 +150,41 @@ public class ObjectCreator {
             } else { //рекурсивно генерируем сложные объекты
 
                 //получаем имя пакета
-                String strName = infoParameters.get(i).getType().getTypePackage();
+                List<String> strName = new ArrayList<>();
+                strName.add(infoParameters.get(i).getType().getTypePackage());
 
                 //если аргумент метода/конструктора является интерфейсом или абстрактным классом,
                 //то его нельзя инициализировать напрямую. Нужно сначала найти класс, который
                 //имплементирует данный интерфейс, затем подменить интерфейс на
                 //имплементирующий класс.
-                if (infoParameters.get(i).getModifiers().contains("interface")  ||
+                if (infoParameters.get(i).getModifiers().contains("interface") ||
                         infoParameters.get(i).getModifiers().contains("abstract")) {
 
                     //ищем имплементирующий класс и заменяем пакет
-                    //strName = findImplForInterface();
+                    try {
+                        strName = findImplForInterface(Class.forName(strName.get(0)));
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                try {
-                    if (strName.contains("[]")) {
+                //если интерфейс, то перебираем все имеплемнтирующие классы, пока не найдем корректный
+                for (int j = 0; j < strName.size(); j++) {
+                    try {
+                        if (strName.get(j).contains("[]")) {
 
-                        //генерация сложного оаргумент через конструктор, если аргумент еще и простой массив
-                        stringObject = createObjectConsByClass(getArrayClass(Class.forName(strName.substring(0, strName.indexOf("[]")))));
-                    } else {
+                            //генерация сложного оаргумент через конструктор, если аргумент еще и простой массив
+                            stringObject = createObjectConsByClass(getArrayClass(Class.forName(strName.get(j).substring(0, strName.get(j).indexOf("[]")))));
+                        } else {
 
-                        //генерация сложного оаргумент через конструктор, если аргумент не является простым массиовм
-                        stringObject = createObjectConsByClass(Class.forName(strName));
+                            //генерация сложного оаргумент через конструктор, если аргумент не является простым массиовм
+                            stringObject = createObjectConsByClass(Class.forName(strName.get(j)));
+                        }
+
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
                     }
-
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    if (stringObject.getStrObject() != null) break;
                 }
             }
 
@@ -178,25 +195,53 @@ public class ObjectCreator {
         return new GenArgs(strings, objects);
     }
 
-
     /**
      * если аргумент метода/конструктора является интерфейсом или абстрактным классом,
      * то его нельзя инициализировать напрямую. Нужно сначала найти класс, который
      * имплементирует данный интерфейс, затем подменить интерфейс на
      * имплементирующий класс.
+     *
      * @return - новый пакет, для которого будем генеировать.
      */
-    private String findImplForInterface() {
+    private List<String> findImplForInterface(Class aClass) {
 
-        return "";
+        System.out.println(aClass.getProtectionDomain().getCodeSource().getLocation().getPath());
+
+        List<String> classesTobeReturned = new ArrayList<String>();
+        if (aClass.getProtectionDomain().getCodeSource().getLocation().getPath().contains("target/classes")) {
+            ClassScanner classScanner = new ClassScanner();
+            classScanner.scanPath();
+            List<Class> classes = classScanner.getScannedClasses();
+
+            for (int i = 0; i < classes.size(); i++) {
+                if (aClass.isAssignableFrom(classes.get(i))) {
+                    if (!Modifier.toString(classes.get(i).getModifiers()).contains("abstract") &&
+                            !Modifier.toString(classes.get(i).getModifiers()).contains("interface")) {
+
+                        classesTobeReturned.add(classes.get(i).getName());
+                        System.out.println(classes.get(i).getName());
+                    }
+                }
+            }
+
+            return classesTobeReturned;
+        } else {
+            try {
+                return utils.findClassesInJar(aClass, aClass.getProtectionDomain().getCodeSource().getLocation().getPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
         //собираем список классов, которые исплементируют нужный нам интерфейс
     }
 
     /**
      * Проверка того, что созданный коснтруктор не ломается.
-     * @param cl - класс, для которого проверяется конструктор
+     *
+     * @param cl             - класс, для которого проверяется конструктор
      * @param infoParameters - параметры целевого класса
-     * @param args - массив сгенерированных аргументов (объекты)
+     * @param args           - массив сгенерированных аргументов (объекты)
      * @return - объект сгенеированного класса.
      */
     private Object checkObj(Class cl, ArrayList<InfoParameter> infoParameters, Object[] args) {
@@ -219,6 +264,7 @@ public class ObjectCreator {
 
     /**
      * получаем класс для простых массивов любого типа.
+     *
      * @param cl - класс типа (не массива)
      * @return - класс массива входного класса
      */
@@ -242,6 +288,7 @@ public class ObjectCreator {
 
     /**
      * Метод для получения примтивных классов.
+     *
      * @param typeName - имя примитивного класса.
      * @return - класс необходимого примитивного типа
      * @throws ClassNotFoundException
@@ -260,9 +307,10 @@ public class ObjectCreator {
 
     /**
      * Проверяется, что объект создается с входными сгенерированными аргументами.
-     * @param cl - класс, для которого производится проверка
+     *
+     * @param cl       - класс, для которого производится проверка
      * @param consArgs - массив классов(типов) для каждого аргумента, чтобы определить нужный конструктор
-     * @param args - сгенерированные аргументы(должны соотвествовать по типу consArgs)
+     * @param args     - сгенерированные аргументы(должны соотвествовать по типу consArgs)
      * @return в случае успех сгенерированный объект с входными аргументами, в противном случае null
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
