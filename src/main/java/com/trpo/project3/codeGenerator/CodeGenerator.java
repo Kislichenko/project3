@@ -34,11 +34,10 @@ public class CodeGenerator {
 
     public void genTests(ArrayList<InfoClass> infoClasses) {
         for (InfoClass infoClass : infoClasses) {
-            System.out.println("CLASS: "+infoClass.getName());
             String genTest = genTest(infoClass);
             if(genTest.equals("")) continue;
 
-            classTests.put(infoClass.getName(), genTest(infoClass));
+            classTests.put(infoClass.getName(), genTest);
         }
     }
 
@@ -64,6 +63,7 @@ public class CodeGenerator {
 
         String test = "";
         String beforeCons = genBeforeConstructors(infoClass);
+
         if(beforeCons.equals("")){
             return "";
         }else {
@@ -182,6 +182,7 @@ public class CodeGenerator {
             return TEST_ANNOTATION
                     + PUBLIC_VOID_TEST
                     + infoMethod.getName()
+                    +"Test"
                     + EMPTY_BRACKETS
                     + OPEN_BLOCK
                     + methodInnerTest

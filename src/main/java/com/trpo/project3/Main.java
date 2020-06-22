@@ -30,7 +30,7 @@ public class Main {
         classScanner.scanPath();
         List<Class> classes = classScanner.getScannedClasses();
         for (int i = 0; i < classes.size(); i++) {
-            if (classes.get(i).getSimpleName().contains("Test11")) {
+            if (classes.get(i).getSimpleName().contains("Test7")) {
                 System.out.println(objectCreator.createObjectConsByClass(classes.get(i)).getStrObject());
             }
         }

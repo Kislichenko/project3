@@ -272,7 +272,7 @@ public class ObjectCreator {
             return checkCons(cl, cArg, args);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return null;
     }
@@ -334,9 +334,9 @@ public class ObjectCreator {
      */
     private Object checkCons(Class cl, Class[] consArgs, Object[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         //плохая защита от переаолнения массивов
-        if (cl.getSimpleName().contains("List")) {
-            return null;
-        }
+//        if (cl.getSimpleName().contains("List")) {
+//            return null;
+//        }
 
         return cl.getDeclaredConstructor(consArgs).newInstance(args);
     }

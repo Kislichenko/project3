@@ -8,5 +8,5 @@ import java.util.ArrayList;
 @Data
 @AllArgsConstructor
 public class Test7 {
-    //ArrayList<String> a;
+    ArrayList<String> a;
 }
