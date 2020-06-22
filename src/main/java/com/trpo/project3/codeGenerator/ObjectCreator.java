@@ -27,7 +27,7 @@ public class ObjectCreator {
         utils = new Utils();
         primitives = Arrays.asList("int", "float", "byte", "long", "double",
                 "char", "short", "boolean", "String", "int[]", "float[]", "byte[]", "long[]", "double[]",
-                "char[]", "short[]", "boolean[]", "Class", "String[]");
+                "char[]", "short[]", "boolean[]", "Class", "String[]", "Object[]");
     }
 
 
@@ -148,8 +148,13 @@ public class ObjectCreator {
         for (int i = 0; i < infoParameters.size(); i++) {
             StringObject stringObject = null;
 
+            //проверим, является ли параметр дженериком
+            if(infoParameters.get(i).getGenericType().contains("<")){
+                System.out.println("TTT: "+infoParameters.get(i).getGenericType());
+                stringObject = new StringObject(null, "null", null);
+            }
             //проверяем, является ли параметр примитивом (задан список примтивов)
-            if (primitives.contains(infoParameters.get(i).getType().getName())) {
+            else if (primitives.contains(infoParameters.get(i).getType().getName())) {
 
                 //генерируем примитив (объект + строка исходного кода)
                 stringObject = (new PrimitiveGenerator()).getGenPrim(infoParameters.get(i).getType().getName());
@@ -180,6 +185,7 @@ public class ObjectCreator {
 
                 //если интерфейс, то перебираем все имеплемнтирующие классы, пока не найдем корректный
                 for (int j = 0; j < strName.size(); j++) {
+
                     try {
                         if (strName.get(j).contains("[]")) {
 

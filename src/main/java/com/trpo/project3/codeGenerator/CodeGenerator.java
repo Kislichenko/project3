@@ -186,6 +186,7 @@ public class CodeGenerator {
                     + infoMethod.getName()
                     +"Test"
                     + EMPTY_BRACKETS
+                    + "throws IOException"
                     + OPEN_BLOCK
                     + methodInnerTest
                     + CLOSE_BLOCK;

@@ -167,6 +167,7 @@ public class ClassInformer {
                     .name(parameterNames[i])
                     .type(getParameterInfoType(parameters[i]))
                     .modifiers(Modifier.toString(parameters[i].getType().getModifiers()))
+                    .genericType(parameters[i].getParameterizedType().getTypeName())
                     .build());
         });
 

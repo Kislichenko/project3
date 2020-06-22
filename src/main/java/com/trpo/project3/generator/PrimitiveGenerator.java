@@ -111,7 +111,7 @@ public class PrimitiveGenerator {
             return new StringObject(str,
                     "new String[]{"+str1+","+str2+"}", null);
         } else {
-            return new StringObject(null, "", null);
+            return new StringObject(null, "null", null);
         }
 
     }
