@@ -2,12 +2,13 @@ package com.trpo.project3.codeGenerator;
 
 
 import com.google.googlejavaformat.java.FormatterException;
+import com.trpo.project3.dto.GenArgs;
 import com.trpo.project3.dto.InfoClass;
 import com.trpo.project3.dto.InfoMethod;
+import com.trpo.project3.dto.StringObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import javax.rmi.CORBA.Util;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.trpo.project3.codeGenerator.CodeGenConstants.*;
@@ -28,6 +29,9 @@ public class CodeGenerator {
      * @param infoClasses - массив объектов, содержащих всю необходимую информацию
      *                    тестируемых классах
      */
+
+    private Set<String> headers = new HashSet<>();
+
     public void genTests(ArrayList<InfoClass> infoClasses) {
         for (InfoClass infoClass : infoClasses) {
             classTests.put(infoClass.getName(), genTest(infoClass));
@@ -80,7 +84,15 @@ public class CodeGenerator {
      * @return - код инициализации используемых классов.
      */
     private String genBeforeConstructors(InfoClass infoClass) {
-        return (new ObjectCreator()).createCons(infoClass);
+        return createCons(infoClass);
+    }
+
+    private String createCons(InfoClass infoClass) {
+        StringObject stringObject = (new ObjectCreator()).createCons(infoClass);
+        if(stringObject.getHeaders()!=null) {
+            headers.addAll(stringObject.getHeaders());
+        }
+        return (new Utils()).createCons(stringObject, infoClass.getName());
     }
 
     /**
@@ -122,8 +134,7 @@ public class CodeGenerator {
      */
     private String getAllHeaders(InfoClass infoClass) {
         return getTestHeaders()
-                + (new ClassImports())
-                .getLinkImports(infoClass)
+                + headers
                 .stream()
                 .map(this::genImport)
                 .collect(Collectors.joining());
@@ -160,7 +171,17 @@ public class CodeGenerator {
                 + infoMethod.getName()
                 + EMPTY_BRACKETS
                 + OPEN_BLOCK
-                + (new ObjectCreator()).createObjectMethods(infoMethod)
+                + getMethod(infoMethod)
                 + CLOSE_BLOCK;
+    }
+
+    private String getMethod(InfoMethod infoMethod){
+        GenArgs args = (new ObjectCreator()).createObjectMethods(infoMethod);
+
+        if(args.getHeaders()!=null){
+            headers.addAll(args.getHeaders());
+        }
+        //формирование строки вызова метода с параметрами или без
+        return (new Utils()).genInvokeMethod(infoMethod, args);
     }
 }

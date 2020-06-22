@@ -3,6 +3,7 @@ package com.trpo.project3.examples;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.jsoup.parser.Parser;
 
 @Getter
 @Setter
@@ -14,6 +15,7 @@ public class Car {
     private int counter = 0;
     private int[] abr;
     private Test2 test2;
+    Parser parser;
 
     public void setModelAndCost(Cat cat, int cost1) {
         this.cat = cat;

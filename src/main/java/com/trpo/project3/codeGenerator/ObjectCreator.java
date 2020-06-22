@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Попытки создать корректный конструтор будут предприниматься, начиная с конструктора
@@ -28,14 +26,15 @@ public class ObjectCreator {
             "char", "short", "boolean", "String", "int[]", "float[]", "byte[]", "long[]", "double[]",
             "char[]", "short[]", "boolean[]", "String[]");
 
+
     /**
-     * Генерация строки кода инициализации конструктора.
+     * Генерация строки кода инициализации конструктора. !!! обновить
      *
      * @param infoClass - объект, содержащий всю необходимую инф-цию классе.
      * @return - строка кода инициализации конструктора.
      */
-    public String createCons(InfoClass infoClass) {
-        return utils.createCons(createObjectCons(infoClass), infoClass.getName());
+    public StringObject createCons(InfoClass infoClass) {
+        return createObjectCons(infoClass);
     }
 
     /**
@@ -55,12 +54,9 @@ public class ObjectCreator {
      *                   производится генерация кода.
      * @return строка исходного кода для вызова метода с рекурсивным заполнением параметров
      */
-    public String createObjectMethods(InfoMethod infoMethod) {
+    public GenArgs createObjectMethods(InfoMethod infoMethod) {
         //рекурсивно генерируем аргументы метода
-        GenArgs args = genArgs(infoMethod.getParameters());
-
-        //формирование строки вызова метода с параметрами или без
-        return utils.genInvokeMethod(infoMethod, args);
+        return genArgs(infoMethod.getParameters());
     }
 
     /**
@@ -114,9 +110,9 @@ public class ObjectCreator {
         }
 
         if (isCorrect != null) { //если нужный конструктор был найден
-            return new StringObject(isCorrect, utils.createConsA(infoClass.getName(), args.getGenArgs()));
+            return new StringObject(isCorrect, utils.createConsA(infoClass.getName(), args.getGenArgs()), args.getHeaders());
         } else { //если конструктор не удалось найти/создать
-            return new StringObject(null, "");
+            return new StringObject(null, "", null);
         }
     }
 
@@ -137,6 +133,8 @@ public class ObjectCreator {
 
         //сгенерированные объекты в виде строки
         List<String> strings = new ArrayList<>();
+
+        Set<String> headers = new HashSet<>();
 
         //перебираем все параметры
         for (int i = 0; i < infoParameters.size(); i++) {
@@ -173,26 +171,34 @@ public class ObjectCreator {
                     try {
                         if (strName.get(j).contains("[]")) {
 
-                            //генерация сложного оаргумент через конструктор, если аргумент еще и простой массив
+                            //генерация сложного аргумента через конструктор, если аргумент еще и простой массив
                             stringObject = createObjectConsByClass(getArrayClass(Class.forName(strName.get(j).substring(0, strName.get(j).indexOf("[]")))));
                         } else {
 
-                            //генерация сложного оаргумент через конструктор, если аргумент не является простым массиовм
+                            //генерация сложного аргумента через конструктор, если аргумент не является простым массиовм
                             stringObject = createObjectConsByClass(Class.forName(strName.get(j)));
                         }
 
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
-                    if (stringObject.getStrObject() != null) break;
+                    if (stringObject.getStrObject() != null) {
+                        headers.add(strName.get(j));
+                        break;
+                    }
                 }
             }
 
-            objects[i] = stringObject.getObject();
-            strings.add(stringObject.getStrObject());
+            if(stringObject!=null) {
+                objects[i] = stringObject.getObject();
+                strings.add(stringObject.getStrObject());
+                if(stringObject.getHeaders()!=null) {
+                    headers.addAll(stringObject.getHeaders());
+                }
+            }
         }
 
-        return new GenArgs(strings, objects);
+        return new GenArgs(strings, objects, headers);
     }
 
     /**
@@ -205,10 +211,12 @@ public class ObjectCreator {
      */
     private List<String> findImplForInterface(Class aClass) {
 
-        System.out.println(aClass.getProtectionDomain().getCodeSource().getLocation().getPath());
+        System.out.println(aClass.getName());
+        System.out.println(aClass.getProtectionDomain().getCodeSource());
+        //System.out.println(aClass.getProtectionDomain().getCodeSource().getLocation().getPath());
 
         List<String> classesTobeReturned = new ArrayList<String>();
-        if (aClass.getProtectionDomain().getCodeSource().getLocation().getPath().contains("target/classes")) {
+        if (aClass.getProtectionDomain().getCodeSource()==null || aClass.getProtectionDomain().getCodeSource().getLocation().getPath().contains("target/classes")) {
             ClassScanner classScanner = new ClassScanner();
             classScanner.scanPath();
             List<Class> classes = classScanner.getScannedClasses();

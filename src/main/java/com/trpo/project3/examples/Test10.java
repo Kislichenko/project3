@@ -6,5 +6,5 @@ import java.nio.file.Path;
 
 @AllArgsConstructor
 public class Test10 {
-    Path path;
+    //Path path;
 }

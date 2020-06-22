@@ -11,8 +11,8 @@ import java.util.Set;
 @Setter
 public class Generics {
     int number = 0;
-    ArrayList<String> arrayList;
+    //ArrayList<String> arrayList;
     Integer newNumber = 1;
-    Set<Integer> set;
-    List<String> list;
+    //Set<Integer> set;
+    //List<String> list;
 }

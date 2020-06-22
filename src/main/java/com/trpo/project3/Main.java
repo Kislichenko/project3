@@ -20,7 +20,8 @@ public class Main {
         Test9 test9 = new Test9(new Test8Impl("hello", new Test2("ttt", new int[]{1, 2})), "ff");
         test9.getHello();
 
-//        generator.run();
+        Generator generator = new Generator();
+        generator.run();
 
 
         String str= String.valueOf(1);
@@ -29,7 +30,7 @@ public class Main {
         classScanner.scanPath();
         List<Class> classes = classScanner.getScannedClasses();
         for (int i = 0; i < classes.size(); i++) {
-            if (classes.get(i).getSimpleName().contains("Test9")) {
+            if (classes.get(i).getSimpleName().contains("Test11")) {
                 System.out.println(objectCreator.createObjectConsByClass(classes.get(i)).getStrObject());
             }
         }
