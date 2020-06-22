@@ -1,5 +1,9 @@
 package com.trpo.project3.codeGenerator;
 
+import com.trpo.project3.dto.GenArgs;
+import com.trpo.project3.dto.InfoClass;
+import com.trpo.project3.dto.InfoMethod;
+import com.trpo.project3.dto.StringObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+
+import static com.trpo.project3.codeGenerator.CodeGenConstants.END_LINE;
 
 public class Utils {
 
@@ -40,6 +46,35 @@ public class Utils {
 
     public String firstLetterToLowCase(String str) {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
+    }
+
+
+    public String genInvokeMethod(InfoMethod infoMethod, GenArgs args){
+        //формирование строки кода с заполнением аргументов
+        String arguments = "";
+        if (args.getGenArgs().size() > 0) {
+            for (int i = 0; i < args.getGenArgs().size(); i++) {
+                arguments += args.getGenArgs().get(i) + ",";
+            }
+            arguments = arguments.substring(0, arguments.length() - 1);
+        }
+
+       return  "" + firstLetterToLowCase(infoMethod.getNameClass())
+                + "." + infoMethod.getName()
+                + "(" + arguments
+                + "); ";
+    }
+
+    /**
+     * Генерация строки кода инициализации конструктора.
+     * @param stringObject
+     * @param className
+     * @return
+     */
+    public String createCons(StringObject stringObject, String className) {
+        return "" + className + " "
+                + firstLetterToLowCase(className)
+                + " = " + stringObject.getStrObject() + END_LINE;
     }
 
     //генерация кода инициализации через конструктор
